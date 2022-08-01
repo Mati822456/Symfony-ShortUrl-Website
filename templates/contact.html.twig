@@ -1,0 +1,12 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Wyślij Wiadomość!{% endblock %}
+
+{% block home %}
+    <div class="form-page-2">
+    {{form_start(form)}}
+        {{form_widget(form)}}
+        <button type="submit" class="create-button">Wyślij</button>
+    {{form_end(form)}}
+    </div>
+{% endblock %}

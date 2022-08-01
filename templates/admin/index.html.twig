@@ -1,0 +1,398 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Panel Administacyjny{% endblock %}
+
+{% block top %}{% endblock %}
+{% block home %}
+    <script>
+        function confirm_delete_adm(unique_id){
+                Swal.fire({
+                    title: 'Czy jesteś pewien?',
+                    text: "Nie będzie można tego cofnąć!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    cancelButtonText: 'Anuluj',
+                    confirmButtonText: 'Tak, usuń to!'
+                    }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location = "/webadm/delete/" + unique_id;
+                    }
+                    })
+            }
+        function confirm_delete_message(id){
+                Swal.fire({
+                    title: 'Czy jesteś pewien?',
+                    text: "Nie będzie można tego cofnąć!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    cancelButtonText: 'Anuluj',
+                    confirmButtonText: 'Tak, usuń to!'
+                    }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location = "/messages/delete/" + id;
+                    }
+                    })
+            }
+        function cancel_website(unique_id){
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Odrzucanie strony',
+                    input: 'text',
+                    inputLabel: 'Podaj powód odrzucenia',
+                    inputValidator: (value) => {
+                        if(!value){
+                            return 'Musisz podać powód!'
+                        }
+                    },
+                    showCancelButton: true,
+                    cancelButtonText: 'Anuluj',
+                    cancelButtonColor: '#d33',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Tak, odrzuć!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location = "/webadm/cancel/" + unique_id + "/" + result.value;
+                    }
+                })
+            }
+            function set_role(email){
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Nadawanie roli',
+                    input: 'select',
+                    inputOptions: {
+                        'Admin': 'Administrator',
+                        'Mod': 'Moderator',
+                        'User': 'Użytkownik'
+                    },
+                    inputPlaceholder: 'Wybierz role',
+                    inputValidator: (value) => {
+                        if(!value){
+                            return 'Musisz podać role!'
+                        }
+                    },
+                    showCancelButton: true,
+                    cancelButtonText: 'Anuluj',
+                    cancelButtonColor: '#d33',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Tak, nadaj!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location = "/users/setrole/" + email + "/" + result.value;
+                    }
+                })
+            }
+            function read_message(id, subject , message, visited){
+                Swal.fire({
+                    title: subject,
+                    input: 'textarea',
+                    inputLabel: 'Wiadomość',
+                    inputAttributes: {
+                        'height': '30em'
+                    },
+                    inputValue: message,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Przeczytane!',
+                    showCancelButton: false,
+                    allowOutsideClick: false
+                }).then((result) => {
+                    if(result.isConfirmed && visited == false){
+                        window.location = "/messages/status/" + id;
+                    }
+                })
+                Swal.disableInput();
+            }
+    </script>
+
+    <div class="sidebar">
+    <ul class="nav_list">
+      <li>
+        <a href="/admin" class="{{ app.request.pathinfo == "/admin" ? "active": ""}}">
+          <i class='fas fa-home' ></i>
+          <span class="links_name">Panel</span>
+        </a>
+        <span class="tooltip">Panel</span>
+      </li>
+      {% if is_granted('ROLE_ADMIN') %}
+        <li>
+            <a href="/users" class="{{ app.request.pathinfo == "/users" ? "active": ""}}">
+            <i class='fas fa-users' ></i>
+            <span class="links_name">Użytkownicy</span>
+            </a>
+            <span class="tooltip">Użytkownicy</span>
+        </li>
+      {% endif %}
+      <li>
+        <a href="/webadm" class="{{ "/webadm" in app.request.pathinfo ? "active": ""}}">
+          <i class='fa-solid fa-code' ></i>
+          <span class="links_name">Strony</span>
+        </a>
+        <span class="tooltip">Strony</span>
+      </li>
+      <li>
+        <a href="/messages" class="{{ "/messages" in app.request.pathinfo ? "active": ""}}">
+          <i class='fa-solid fa-message'></i>
+          <span class="links_name">Wiadomości</span>
+        </a>
+        <span class="tooltip">Wiadomości</span>
+      </li>
+      {% if is_granted('ROLE_ADMIN') %}
+	  <li>
+        <a href="/settings" class="{{ app.request.pathinfo == "/settings" ? "active": ""}}">
+          <i class='fa-solid fa-gear'></i>
+          <span class="links_name">Ustawienia</span>
+        </a>
+        <span class="tooltip">Ustawienia</span>
+      </li>
+      {% endif %}
+    </ul>
+    </div>
+    <div class="main {{app.request.pathinfo == "/admin" ? 'mn-2' : ''}}">
+    {# Main Area #}
+    {% if app.request.pathinfo == "/admin" %}
+
+        {# GRADIENT BANNER DESIGN BY SIMON LURWER ON DRIBBBLE:
+        https://dribbble.com/shots/14101951-Banners #}
+
+        <div class="cards">
+            {% if is_granted('ROLE_ADMIN') %}
+                <div class="card card-1">
+                    <div class="card__icon"><i class='fas fa-users' ></i></div>
+                    <h2 class="card__title">Wszystkich użytkowników</br> <b>{{array.users}}</b> </h2>
+                    <p class="card__apply">
+                        <a class="card__link" href="/users">Zarządzaj <i class="fas fa-arrow-right"></i></a>
+                    </p>
+                </div>
+            {% endif %}
+            <div class="card card-2">
+                <div class="card__icon"><i class="fa-solid fa-code"></i></div>
+                <h2 class="card__title">Wszystkich stron</br> <b>{{array.websites}}</b> </h2>
+                <p class="card__apply">
+                    <a class="card__link" href="/webadm">Zarządzaj <i class="fas fa-arrow-right"></i></a>
+                </p>
+            </div>
+            {% if links.status == 1 %}
+                <div class="card card-3">
+                    <div class="card__icon"><i class="fa-solid fa-check"></i></div>
+                    <h2 class="card__title">Wszystkich stron do zaakceptowania</br> <b>{{array.accept}}</b> </h2>
+                    <p class="card__apply">
+                        <a class="card__link" href="/webadm/accept">Zarządzaj <i class="fas fa-arrow-right"></i></a>
+                    </p>
+                </div>
+            {% endif %}
+            <div class="card card-4">
+                <div class="card__icon"><i class="fa-solid fa-laptop-code"></i></div>
+                <h2 class="card__title">Nowych linków (dziś)</br> <b>{{array.today}}</b> </h2>
+                <p class="card__apply">
+                    <a class="card__link" href="/webadm/today">Zarządzaj <i class="fas fa-arrow-right"></i></a>
+                </p>
+            </div>
+            <div class="card card-1">
+                <div class="card__icon"><i class="fa-solid fa-eye"></i></div>
+                <h2 class="card__title">Wszystkich wyświetleń</br> <b>{{array.visits}}</b> </h2>
+            </div>
+            <div class="card card-2">
+                <div class="card__icon"><i class="fa-solid fa-eye"></i></div>
+                <h2 class="card__title">Wyświetleń (dziś) z nowych linków</br> <b>{{array.tdvisits}}</b> </h2>
+            </div>
+            <div class="card card-3">
+                <div class="card__icon"><i class="fa-solid fa-message"></i></div>
+                <h2 class="card__title">Wszystkich wiadomości</br> <b>{{array.messages}}</b> </h2>
+                <p class="card__apply">
+                    <a class="card__link" href="/messages">Zarządzaj <i class="fas fa-arrow-right"></i></a>
+                </p>
+            </div>
+            <div class="card card-4">
+                <div class="card__icon"><i class="fa-solid fa-envelope"></i></div>
+                <h2 class="card__title">Wiadomości do odczytania</br> <b>{{array.toread}}</b> </h2>
+                <p class="card__apply">
+                    <a class="card__link" href="/messages/read">Zarządzaj <i class="fas fa-arrow-right"></i></a>
+                </p>
+            </div>
+        </div>
+    {% endif %}
+
+    {# Users Area #}
+    {% if app.request.pathinfo == "/users" %}
+        <table class="rwd-table">
+            <tbody>
+            <tr>
+                <th>ID</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Akcje</th>
+            </tr>
+            {% for user in users %}
+                <tr>
+                    <td data-th="ID">{{loop.index}}</td>
+                    <td data-th="Email">{{user.email}}</td>
+
+                    {% if user.roles is iterable %}
+                        <td data-th="Role">
+                        {% for role in user.roles %}
+                            {% if role == "ROLE_USER" %}
+                                <span class="status" style="background:#f6b93b;color:#ffffff;padding:5px;border-radius:5px;">Użytkownik</span>
+                            {% endif %}
+                            {% if role == "ROLE_ADMIN" %}
+                                <span class="status" style="background:#e55039;color:#ffffff;padding:5px;border-radius:5px;">Administrator</span>
+                            {% endif %}
+                            {% if role == "ROLE_MOD" %}
+                                <span class="status" style="background:#26de81;color:#ffffff;padding:5px;border-radius:5px;">Moderator</span>
+                            {% endif %}
+                            {% if role == "ROLE_BLOCKED" %}
+                                <span class="status" style="background:#a55eea;color:#ffffff;padding:5px;border-radius:5px;">Zablokowany</span>
+                            {% endif %}
+                        {% endfor %}
+                        </td>
+                    {% endif %}
+
+                    {# {% if switch user.roles|join(', ') == "ROLE_USER" %}
+                         <td data-th="Role"><span style="background:#f6b93b;color:#ffffff;padding:5px;border-radius:5px;">Użytkownik</span></td>
+                    {% endif %}
+                    {% if switch user.roles|join(', ') == "ROLE_ADMIN" %}
+                        <td data-th="Role"><span style="background:#b71540;color:#ffffff;padding:5px;border-radius:5px;">Administrator</span></td>
+                    {% endif %} #}
+                    
+                    <td data-th="Akcje"><a href="users/block/{{user.email}}" class="button">{{"ROLE_BLOCKED" in user.roles ? "Odblokuj" : "Zablokuj"}}</a><a onClick="set_role('{{user.email}}')" class="button" style="background:#45aaf2;">Zmień Role</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    {# Websites Area #}
+    {# or app.request.pathinfo == "/webadm/accept" or app.request.pathinfo == "/webadm/today" or app.request.requesturi == "/webadm/search" #}
+    {% if "/webadm" in app.request.pathinfo %}
+        <div class="search">
+            <form action="/webadm/search" method="GET">
+                <label>Szukaj</label>
+                <input type="text" name="query" value="{{ search != null ? search : "" }}">
+                <button type="submit" class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+                
+            </form>
+            <button class="search-btn margin"><a href="/webadm/today"><i class="fa-solid fa-calendar-day"></i></a></button>
+            {% if links.status == 1 %}<button class="search-btn margin-2"><a href="/webadm/accept"><i class="fa-solid fa-check"></i></a></button>{% endif %}
+        </div>
+        <table class="rwd-table webadm">
+            <tbody>
+            <tr>
+                <th>ID</th>
+                <th>Strona</th>
+                <th>Skrócony link</th>
+                <th>Odwiedzeń</th>
+                <th>Status</th>
+                <th>Akcje</th>
+            </tr>
+            {% if websites is empty %}
+                <tr>
+                    <td data-th="Brak" colspan="6">Brak elementów do wyświetlenia</td>
+                </tr>
+            {% endif %}
+            {% for item in websites %}
+                <tr>
+                    <td data-th="ID">{{loop.index}}</td>
+                    <td data-th="Strona">{{item.url|length > 50 ? item.url|slice(0, 50) ~ '...' : item.url}}</td>
+                    {% if item.status == 2 %}
+                        <td data-th="Powód"><span class="status canceled">! {{item.shorturl}} !</span></td>
+                    {% else %}
+                        <td data-th="Skrócony link">http://127.0.0.1:8000/url/{{item.shorturl}}</td>
+                    {% endif %}
+                    <td data-th="Odwiedzeń">{{item.visited}}</td>
+                    {% if item.status == 0 %}
+                        <td data-th="Status"><span class="status" style="background:#f6b93b;color:#ffffff;padding:5px;border-radius:5px;">Oczekujące</span></td>
+                    {% endif %}
+                    {% if item.status == 1 %}
+                        <td data-th="Status"><span class="status" style="background:#2ed573;color:#ffffff;padding:5px;border-radius:5px;">Zaakceptowane</span></td>
+                    {% endif %}
+                    {% if item.status == 2 %}
+                        <td data-th="Status"><span class="status" style="background:#ff4757;color:#ffffff;padding:5px;border-radius:5px;">Odrzucone</span></td>
+                    {% endif %}
+                    
+                    {# #f6b93b Pending #}
+                    {# #2ed573 Accepted #}
+                    {# #ff4757 Rejected #}
+                    <td data-th="Akcje"><a href="{{item.url}}" target="_blank" class="button" style="background:#45aaf2;">Pokaż</a>{% if item.status == 0 %}<a href="/webadm/status/{{ item.hash }}" class="button" style="background:#38ada9;">Akceptuj</a>{% endif %}<a onClick="{{ item.status == 0 ? 'cancel_website("' ~ item.hash ~ '")' : 'confirm_delete_adm("' ~ item.hash ~ '")' }}" class="button">{{ item.status == 0 ? ("/webadm" in app.request.pathinfo ? "Odrzuć" : "") : "Usuń" }}</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    {% if "/messages" in app.request.pathinfo %}
+        <div class="search user">
+        <form action="/messages/search" method="GET">
+            <label>Szukaj</label>
+            <input type="text" name="query" value="{{ search != null ? search : "" }}">
+            <button type="submit" class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </form>
+        </div>
+        <table class="rwd-table">
+            <tbody>
+            <tr>
+                <th>ID</th>
+                <th>Imię</th>
+                <th>Email</th>
+                <th>Temat</th>
+                <th>Wiadomość</th>
+                <th>Odczytane</th>
+                <th>Akcje</th>
+            </tr>
+            {% if messages is empty %}
+                <tr>
+                    <td data-th="Brak" colspan="7">Brak elementów do wyświetlenia</td>
+                </tr>
+            {% endif %}
+            {% for item in messages %}
+                <tr>
+                    <td data-th="ID">{{loop.index}}</td>
+                    <td data-th="Imię">{{item.name}}</td>
+                    <td data-th="Email">{{item.email}}</td>
+                    <td data-th="Temat">{{item.subject}}</td>
+                    <td data-th="Wiadomość">{{item.message|length > 30 ? item.message|slice(0, 30) ~ '...' : item.message}}</td>
+                    {% if item.visited == 0 %}
+                        <td data-th="Status"><span class="status" style="background:#f6b93b;color:#ffffff;padding:5px;border-radius:5px;">Nie</span></td>
+                    {% else %}
+                        <td data-th="Status"><span class="status" style="background:#2ed573;color:#ffffff;padding:5px;border-radius:5px;">Tak</span></td>
+                    {% endif %}
+                    <td data-th="Akcje"><a onClick="read_message({{item.id}}, '{{item.subject}}' ,'{{item.message}}', {{item.visited == 0 ? "false" : "true"}})" class="button" style="background:#45aaf2;">Przeczytaj</a><a onClick="confirm_delete_message('{{item.id}}')" class="button">Usuń</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    {# Settings Area #}
+    {% if app.request.pathinfo == "/settings" %}
+        <table class="rwd-table">
+            <tbody>
+            <tr>
+                <th>ID</th>
+                <th>Nazwa</th>
+                <th>Status</th>
+                <th>Akcje</th>
+            </tr>
+            {% for setting in settings %}
+                <tr>
+                    <td data-th="ID">{{loop.index}}</td>
+                    <td data-th="Nazwa">{{setting.name}}</td>
+                    {% if setting.status == 1 %}
+                        <td data-th="Status"><span class="status" style="background:#2ed573;color:#ffffff;padding:5px;border-radius:5px;">Uruchomione</span></td>
+                    {% else %}
+                        <td data-th="Status"><span class="status" style="background:#ff4757;color:#ffffff;padding:5px;border-radius:5px;">Wyłączone</span></td>
+                    {% endif %}
+                    
+                    {# #f6b93b Pending #}
+                    {# #2ed573 Accepted #}
+                    {# #ff4757 Rejected #}
+                    <td data-th="Akcje"><a href="/settings/status/{{ setting.id }}" class="button" style="background:#0984e3;margin-left:0;">Zmień</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+    </div>
+{% endblock %}

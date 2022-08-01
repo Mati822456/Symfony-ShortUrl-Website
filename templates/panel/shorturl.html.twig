@@ -1,0 +1,20 @@
+{% extends "base.html.twig" %}
+{% block title %}Skróć Link{% endblock %}
+{% block home %}
+    <div class="form-page-2">
+    {{form_start(form)}}
+        <div class="error">{{ error is defined ? error : '' }}</div>
+        {{form_label(form.url)}}
+        {{form_widget(form.url)}}
+        {{form_label(form.include)}}
+        <div class="button-cover">
+            <div class="button r" id="button-1">
+            {{form_widget(form.include)}}
+            <div class="knobs"></div>
+            <div class="layer"></div>
+            </div>
+        </div>
+        <button type="submit" class="create-button">Skróć</button>
+    {{form_end(form)}}
+    </div>
+{% endblock %}

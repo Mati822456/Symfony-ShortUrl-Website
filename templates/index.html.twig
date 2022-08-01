@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Witaj Podróżniku!{% endblock %}
+
+{% block home %}
+    {% if not app.user %}
+        <div class="welcome">Aby utworzyć skrócony link <a href="login" style="color:#ff6b6b;">Zaloguj się</a> lub <a href="register" style="color:#EAB543;">Utwórz konto!</a></div>
+    {% else %}
+        <div class="welcome">Aby utworzyć skrócony link przejdź tu: <a href="shorturl" style="color:#ff9f43;">Skróć Link</a></div>
+    {% endif %}
+    
+    <div class="welcome_2">Najczęściej Wyświetlane strony</div>
+    <table class="styled rwd-table">
+        <tbody>
+            <th>Url</th>
+            <th>Wyświetleń</th>
+            <th>Akcje</th>
+        
+        
+            {% for web in websites %}
+                <tr>
+                    <td data-th="Url">http://127.0.0.1:8000/url/{{ web.shorturl }}</td>
+                    <td data-th="Wyświetleń">{{ web.visited }}</td>
+                    <td data-th="Akcje"><a href="url/{{ web.shorturl }}" class="button" style="margin:0;" target="_blank">Pokaż</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+

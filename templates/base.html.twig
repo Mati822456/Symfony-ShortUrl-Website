@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        <link rel="icon" type="image/x-icon" href="{{ asset('images/logo.png') }}">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href=" {{ asset('build/app.css') }}">
+        <script src="https://kit.fontawesome.com/15901ecbea.js" crossorigin="anonymous"></script>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        {% block javascripts %}
+            <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        {% endblock %}
+          <script>
+            function confirm_delete(unique_id){
+                Swal.fire({
+                    title: 'Czy jesteś pewien?',
+                    text: "Nie będzie można tego cofnąć!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    cancelButtonText: 'Anuluj',
+                    confirmButtonText: 'Tak, usuń to!'
+                    }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location = "/websites/delete/" + unique_id;
+                    }
+                    })
+            }
+        </script>
+    </head>
+    <body>
+        {% block body %}
+            <div class="bg-image" style="background-image: url('{{asset('images/background.jpg')}}');"></div>
+            <header>
+                <img src="{{ asset('images/logo.png') }}" class="logo" alt="logo">
+                <nav>
+                    <ul class="nav_links">
+                        <li><a href="/">Strona Główna</a></li>
+                        <li><a href="/contact">Kontakt</a></li>
+                    </ul>
+                </nav>
+                    {% if app.user %}
+                        <a href="logout" class="log"><button>Wyloguj</button></a>
+                    {% else %}
+                        <a href="login" class="log"><button>Zaloguj</button></a>
+                    {% endif %}
+                
+            </header>
+
+            {% block top %}
+                <div class="picture">
+                    <div class="text">Witaj {{ app.user ? app.user.email : "Podrózniku" }}!</div>
+                </div>
+            {% endblock %}
+            
+            <div class="home">{% block home %}{% endblock %}</div>
+            {% if app.user %}
+                <nav class="nav">
+                    <a href="/" class="nav__link {{ app.request.pathinfo == "/" ? "nav__link--active": "" }}">
+                        <i class="fa-solid fa-house nav__icon"></i>
+                        <span class="nav__text">Główna</span>
+                    </a>
+                    <a href="/websites" class="nav__link {{ app.request.pathinfo == "/websites" ? "nav__link--active": "" }}">
+                        <i class="fa-solid fa-code nav__icon"></i>
+                        <span class="nav__text">Strony</span>
+                    </a>
+                    <a href="/shorturl" class="nav__link {{ app.request.pathinfo == "/shorturl" ? "nav__link--active": "" }}">
+                        <i class="fa-regular fa-window-maximize nav__icon"></i>
+                        <span class="nav__text">Skróć</span>
+                    </a>
+                    <a href="/account" class="nav__link {{ app.request.pathinfo == "/account" ? "nav__link--active": "" }}">
+                        <i class="fa-solid fa-user nav__icon"></i> 
+                        <span class="nav__text">Konto</span>
+                    </a>
+                    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_MOD') %}
+                        <a href="/admin" class="nav__link {{ app.request.pathinfo == "/admin" or app.request.pathinfo == "/users" or "/webadm" in app.request.pathinfo or app.request.pathinfo == "/settings" or app.request.pathinfo == "/messages" ? "nav__link--active": "" }}">
+                            <i class="fa-solid fa-toolbox nav__icon"></i>
+                            <span class="nav__text">{{is_granted('ROLE_ADMIN') ? "Admin" : "Mod"}}</span>
+                        </a>
+                    {% endif %}
+                </nav>
+            {% endif %}
+        {% endblock %}
+    </body>
+</html>

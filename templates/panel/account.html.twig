@@ -1,0 +1,14 @@
+{% extends "base.html.twig" %}
+{% block title %}Konto{% endblock %}
+{% block home %}
+    <div class="form-page-2">
+    {{form_start(form)}}
+
+        <label>Email</label>
+        <input type="text" value="{{user.email}}" readonly>
+        {{form_widget(form)}}
+        <button type="submit" class="create-button">Zmień</button>
+
+    {{form_end(form)}}
+    </div>
+{% endblock %}

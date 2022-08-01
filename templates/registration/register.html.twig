@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Utwórz konto!{% endblock %}
+
+{% block body %}
+    <div class="bg-image" style="background-image: url('{{asset('images/background2.jpg')}}');"></div>
+
+    <div class="form-page">
+
+    {{ form_start(registrationForm) }}
+        
+        <h1>Utwórz konto!</h1>
+        {{ form_row(registrationForm.email) }}
+        {{ form_row(registrationForm.plainPassword, {
+            label: 'Hasło'
+        }) }}
+        {{ form_row(registrationForm.agreeTerms) }}
+
+        <button type="submit" class="btn">Zarejestruj</button>
+        <p class="message">Posiadasz już konto? <a href="login">Zaloguj się</a></p>
+    {{ form_end(registrationForm) }}
+    </div>
+{% endblock %}
