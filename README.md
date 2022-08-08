@@ -38,11 +38,11 @@ If you have everything you can run these commands:
 # Go into the respository
 > cd Symfony-ShortUrl-Website
 
-# Install Runtime Component
-> composer require symfony/runtime
+# Install dependencies from lock file
+> composer install
 
-# Install package to compile assets
-> npm install --save-dev webpack-notifier
+# Install packages from package.json
+> npm install
 
 # Compile assets 
 > npm run dev
