@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Notification;
 use App\Entity\Settings;
 use App\Entity\User;
 use App\Form\SearchFormType;
@@ -13,6 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use LDAP\Result;
 use PhpParser\Node\Expr\Cast\Array_;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\PercentType;
 use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -122,7 +124,7 @@ class AdminController extends AbstractController
     // Get Setting By Given Id
     public function getSettingById($id)
     {
-        return $this->settingsRepository->find($id)[0];
+        return $this->settingsRepository->find($id);
     }
     // Accept Website By Given Hash
     public function acceptWebsite($id)
@@ -131,7 +133,8 @@ class AdminController extends AbstractController
         if($website){
             $website->setStatus(1);
 
-            $this->em->persist($website);
+            $this->sendNotification(1, "Akceptowano stronę", $website->getUser(), $website->getUrl());
+
             $this->em->flush();
         }
     }
@@ -142,6 +145,10 @@ class AdminController extends AbstractController
         if(in_array('ROLE_ADMIN', $this->getUser()->getRoles(), true) or in_array('ROLE_MOD', $this->getUser()->getRoles(), true)){
             $website->setShorturl($reason);
             $website->setStatus(2);
+            $website->setInclude(0);
+            
+            $this->sendNotification(2, "Odrzucono stronę", $website->getUser(), $website->getUrl().", Powód: ".$reason);
+
             $this->em->flush();
         }
     }
@@ -151,6 +158,7 @@ class AdminController extends AbstractController
         $website = $this->getWebsiteByHash($hash);
         if($website){
             if(in_array('ROLE_ADMIN', $this->getUser()->getRoles(), true) or in_array('ROLE_MOD', $this->getUser()->getRoles(), true)){
+                $this->sendNotification(3, "Usunięto stronę", $website->getUser(), $website->getUrl());
                 $this->em->remove($website);
                 $this->em->flush();
             }else{
@@ -210,8 +218,10 @@ class AdminController extends AbstractController
 
                     if(in_array('ROLE_BLOCKED', $user->getRoles(), true)){
                         $user->setRoles(array('ROLE_USER'));
+                        $this->sendNotification(4, "Konto odblokowane", $user, "");
                     }else{
                         $user->setRoles(array('ROLE_BLOCKED'));
+                        $this->sendNotification(4, "Konto zablokowane", $user, "");
                     }
 
                     $this->em->flush();
@@ -227,15 +237,45 @@ class AdminController extends AbstractController
                 if(in_array('ROLE_ADMIN', $this->getUser()->getRoles(), true))
                 {
                     $user = $this->getUserByName($name);
+                    $long_role = "";
                     if($role == "Admin"){
                         $user->setRoles(array('ROLE_ADMIN'));
+                        $long_role = "Administrator";
                     }elseif($role == "Mod"){
                         $user->setRoles(array('ROLE_MOD'));
+                        $long_role = "Moderator";
                     }else{
                         $user->setRoles(array('ROLE_USER'));
+                        $long_role = "Użytkownik";
                     }
-                    $this->em->flush();
+
+                    $this->sendNotification(1, "Nadano uprawnienia", $user, $long_role);
+
                 }
+            }
+        }
+    }
+    // Set Notification With Given Status, Subject, User and Text
+    // Notification Statuses Available
+    // 1: Success
+    // 2: Rejected
+    // 3: Deleted
+    // 4: Information
+    // 5: Warning
+    public function sendNotification($status, $subject, $user, $text)
+    {
+        if($this->getUser()){
+            if(in_array('ROLE_ADMIN', $this->getUser()->getRoles(), true) or in_array('ROLE_MOD', $this->getUser()->getRoles(), true)){
+                $notify = new Notification();
+                $notify->setStatus($status);
+                $notify->setSubject($subject);
+                $notify->setUser($user);
+                $notify->setOpened(0);
+                $notify->setCreatedDate(date("d.m.Y H:i"));
+                $notify->setText($text);
+
+                $this->em->persist($notify);
+                $this->em->flush();
             }
         }
     }

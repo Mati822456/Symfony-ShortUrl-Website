@@ -41,12 +41,19 @@
                         <li><a href="/contact">Kontakt</a></li>
                     </ul>
                 </nav>
-                    {% if app.user %}
-                        <a href="logout" class="log"><button>Wyloguj</button></a>
-                    {% else %}
-                        <a href="login" class="log"><button>Zaloguj</button></a>
-                    {% endif %}
-                
+                    <div class="right-buttons">
+                        {% if app.user %}
+                        <a href="/notifications"><button type="button" class="icon-button">
+                            <i class="fa-solid fa-bell"></i>
+                            <span class="icon-button__badge">{{to_read}}</span>
+                        </button></a>
+                        {% endif %}
+                        {% if app.user %}
+                            <a href="logout" class="log"><button id="log">Wyloguj</button></a>
+                        {% else %}
+                            <a href="login" class="log"><button id="log">Zaloguj</button></a>
+                        {% endif %}
+                    </div>
             </header>
 
             {% block top %}

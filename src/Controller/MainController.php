@@ -3,11 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Contact;
+use App\Entity\Notification;
 use App\Entity\Website;
 use App\Entity\User;
 use App\Form\ContactFormType;
 use App\Form\EditProfileFormType;
 use App\Form\ShortUrlFormType;
+use App\Repository\NotificationRepository;
 use App\Repository\SettingsRepository;
 use App\Repository\UserRepository;
 use App\Repository\WebsiteRepository;
@@ -18,7 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
-
+use Twig\Environment;
 
 class MainController extends AbstractController 
 {
@@ -27,13 +29,17 @@ class MainController extends AbstractController
     private $websiterespository;
     private $userrespository;
     private $settingsrespository;
+    private $notificationrespository;
+    private $twig;
 
-    public function __construct(WebsiteRepository $websiteRepository, UserRepository $userrespository,EntityManagerInterface $em, SettingsRepository $settingsrespository)
+    public function __construct(WebsiteRepository $websiteRepository, UserRepository $userrespository,EntityManagerInterface $em, SettingsRepository $settingsrespository, NotificationRepository $notificationrespository, Environment $twig)
     {
         $this->em = $em;
         $this->websiterespository = $websiteRepository;
         $this->userrespository = $userrespository;
         $this->settingsrespository = $settingsrespository;
+        $this->notificationrespository = $notificationrespository;
+        $this->twig = $twig;
     }
 
     // Retrieving an Array or String from database from the given query
@@ -136,15 +142,27 @@ class MainController extends AbstractController
             }
         }
     }
+    // Delete Notification By Given Id
+    public function deleteNotification($id)
+    {
+        $notification = $this->notificationrespository->find($id);
+        if($notification){
+            if($notification->getUser() == $this->getUser()){
+                $this->em->remove($notification);
+                $this->em->flush();
+            }
+        }
+    }
 
     #[Route('/', name: 'app_main')]
     public function index(): Response
     {
         // Pulling out the 3 most visited websites
         $websites = $this->getMostVisitedWebsites();
-        
+
         return $this->render('index.html.twig',[
-            'websites' => $websites
+            'websites' => $websites,
+            'to_open' => 5
         ]);
     }
     #[Route('/contact', name: 'contact')]
@@ -277,7 +295,46 @@ class MainController extends AbstractController
             'form' => $form->createView()
         ]);
     }
-    
+
+    #[Route('/notifications/{mode}/{id}', name: 'notifications')]
+    public function notifications($mode = null, $id = null): Response
+    {
+        $fdate = null;
+        if($mode == "delete"){
+            // Deleting Notification
+            $this->deleteNotification($id);
+            return $this->redirectToRoute('notifications');
+        }elseif($mode == ""){
+            // Get All Notifications
+            $notifications = $this->notificationrespository->findBy(['user' => $this->getUser()], ['id' => 'DESC']);
+            $twigglobals = $this->twig->getGlobals();
+            $to_read = $twigglobals['to_read'];
+
+            if($to_read > 0){
+                foreach($notifications as $n){
+                    $notify = new Notification();
+                    $notify = $n;
+
+                    if($notify->isOpened() == 0){
+                        $notify->setOpened(1);
+                        $this->em->flush();
+                    }
+                }
+            }
+            
+            if(!empty($notifications)){
+                $fdate = explode(" ", $notifications[0]->getCreatedDate());
+            }
+        }else{
+            return $this->render('pagenotfound.html.twig');
+        }
+        
+        return $this->render('panel/notifications.html.twig', [
+            'notifications' => $notifications,
+            'fdate' => $fdate
+        ]);
+    }
+
     #[Route('/url/{hash}', methods: ['GET'], name: 'route_to_link')]
     public function route_to_link($hash): Response
     {
@@ -298,4 +355,5 @@ class MainController extends AbstractController
 
         return $this->render('pagenotfound.html.twig');
     }
+
 }

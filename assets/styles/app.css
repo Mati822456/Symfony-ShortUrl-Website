@@ -40,6 +40,11 @@ header{
     align-items: center;
     padding:30px 10%;
 }
+@media screen and (max-width: 410px) {
+  header{
+    padding: 30px 2%;
+  }
+}
 .logo{
     cursor: pointer;
     width: 64px;
@@ -58,7 +63,7 @@ header{
 .nav_links li a:hover{
     color: #0088a9;
 }
-header button{
+header button#log{
     padding: 9px 25px;
     background-color: rgba(0, 136, 169, 1);
     border: none;
@@ -66,7 +71,7 @@ header button{
     cursor: pointer;
     transition: all 0.3s ease 0s;
 }
-header button:hover{
+header button#log:hover{
     background-color: rgba(0, 136, 169, 0.8);
 }
 /* Bottom navbar */
@@ -154,6 +159,45 @@ header button:hover{
 .ranking .text{
     color:rgba(254, 164, 127, 1);
     font-size: 16px;
+}
+.icon-button{
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    color: #333333;
+    background: #edf0f1;
+    border: none;
+    outline: none;
+    border-radius: 50%;
+    margin-right: 20px;
+}
+.icon-button:hover {
+  cursor: pointer;
+  color: rgba(0, 136, 169, 1);
+}
+
+.icon-button:active {
+  background: #cccccc;
+}
+
+.icon-button__badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 25px;
+  height: 25px;
+  background: #f44336;
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+}
+.right-buttons{
+  display: flex;
 }
     /* Table Ranking */
     
@@ -276,7 +320,7 @@ header button:hover{
     .form-page-2{
       width: 100%;
       padding: 20px;
-      background-color: rgba(51, 52, 59, 0.7);
+      background-color: rgba(223, 228, 234, 0.1);
       display: flex;
       justify-content: center;
       vertical-align: middle;
@@ -928,6 +972,13 @@ header button:hover{
   .rwd-table th,
   .rwd-table td {
     padding: .5em 1em;
+  }
+  .rwd-table .date{
+    text-align:center;
+    padding: 0.4em !important;
+  }
+  .rwd-table .date::before{
+    display: block !important;
   }
   @media screen and (max-width: 1235px) {
     .rwd-table tr:nth-child(2) {

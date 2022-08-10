@@ -38,6 +38,7 @@ security:
         - { path: ^/shorturl, roles: [ROLE_USER, ROLE_ADMIN, ROLE_MOD] }
         - { path: ^/websites, roles: [ROLE_USER, ROLE_ADMIN, ROLE_MOD] }
         - { path: ^/account, roles: [ROLE_USER, ROLE_ADMIN, ROLE_MOD] }
+        - { path: ^/notifications, roles: [ROLE_USER, ROLE_ADMIN, ROLE_MOD] }
         - { path: ^/admin, roles: [ROLE_ADMIN, ROLE_MOD] }
         - { path: ^/users, roles: ROLE_ADMIN }
         - { path: ^/webadm, roles: [ROLE_ADMIN, ROLE_MOD] }
