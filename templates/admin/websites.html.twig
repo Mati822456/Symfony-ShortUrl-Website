@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Strony{% endblock %}
+
+{% block home %}
+    <div class="admin">
+    <div class="websites">
+        <a href="/admin" class="back"><i class="fa-solid fa-arrow-left"></i> Powrót</a>
+        <div class="search">
+            <form action="/admin/websites/search" method="GET">
+                <label>Szukaj</label>
+                <input type="text" name="query" value="{{ search != null ? search : "" }}">
+                <button type="submit" class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+                <a href="/admin/websites/today"><button class="search-btn margin" type="button"><i class="fa-solid fa-calendar-day"></i></button></a>
+                <a href="/admin/websites/accept"><button class="search-btn margin-2" type="button"><i class="fa-solid fa-check"></i></button></a>
+            </form>
+        </div>
+        <table>
+            <tbody>
+            <tr>
+                <th>ID</th>
+                <th>Strona</th>
+                <th>Skrócony link</th>
+                <th>Odwiedzeń</th>
+                <th>Status</th>
+                <th>Akcje</th>
+            </tr>
+            {% if websites is empty %}
+                <tr>
+                    <td class="empty" colspan="6">Brak elementów do wyświetlenia</td>
+                </tr>
+            {% endif %}
+            {% for item in websites %}
+                <tr>
+                    <td><span>ID: </span>#{{loop.index}}</td>
+                    <td class="url"><span>Url: </span>{{item.url|length > 50 ? item.url|slice(0, 50) ~ '...' : item.url}}</td>
+                    {% if item.status == 2 %}
+                        <td><span class="status canceled">! {{item.shorturl}} !</span></td>
+                    {% else %}
+                        <td class="url"><span>Skrócone: </span>http://127.0.0.1:8000/url/{{item.shorturl}}</td>
+                    {% endif %}
+                    <td><span>Odwiedzeń: </span>{{item.visited}} <i class="fa-solid fa-eye"></i></td>
+                    {% if item.status == 0 %}
+                        <td><span class="status" style="background:#f6b93b;">Oczekujące</span></td>
+                    {% endif %}
+                    {% if item.status == 1 %}
+                        <td><span class="status" style="background:#2ed573;">Zaakceptowane</span></td>
+                    {% endif %}
+                    {% if item.status == 2 %}
+                        <td><span class="status" style="background:#ff6b6b;">Odrzucone</span></td>
+                    {% endif %}
+                    
+                    {# #f6b93b Pending #}
+                    {# #2ed573 Accepted #}
+                    {# #ff6b6b Rejected #}
+                    <td>
+                        <a href="{{item.url}}" target="_blank" class="button show">Pokaż</a>
+                        {% if item.status == 0 %}
+                            <a href="/admin/websites/status/{{ item.hash }}" class="button accept">Akceptuj</a>
+                        {% endif %}
+                        <a onClick="{{ item.status == 0 ? 'cancel_website("' ~ item.hash ~ '")' : 'confirm_delete("' ~ item.hash ~ '")' }}" class="button delete">{{ item.status == 0 ? ("/admin/websites" in app.request.pathinfo ? "Odrzuć" : "") : "Usuń" }}</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    </div>
+    <script>
+    function cancel_website(unique_id){
+        Swal.fire({
+            icon: 'warning',
+            title: 'Odrzucanie strony',
+            input: 'text',
+            inputLabel: 'Podaj powód odrzucenia',
+            inputValidator: (value) => {
+                if(!value){
+                    return 'Musisz podać powód!'
+                }
+            },
+            showCancelButton: true,
+            cancelButtonText: 'Anuluj',
+            cancelButtonColor: '#FF6B6B',
+            confirmButtonColor: '#45AAF2',
+            confirmButtonText: 'Tak, odrzuć!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = "/admin/websites/cancel/" + unique_id + "/" + result.value;
+            }
+        })
+    }
+    function confirm_delete(unique_id){
+        Swal.fire({
+            title: 'Czy jesteś pewien?',
+            text: "Nie będzie można tego cofnąć!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#45AAF2',
+            cancelButtonColor: '#FF6B6B',
+            cancelButtonText: 'Anuluj',
+            confirmButtonText: 'Tak, usuń to!'
+            }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = "/admin/websites/delete/" + unique_id;
+            }
+            })
+    }
+    </script>
+{% endblock %}

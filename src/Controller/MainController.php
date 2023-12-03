@@ -109,7 +109,7 @@ class MainController extends AbstractController
     // Pulling out the 3 most visited websites
     public function getMostVisitedWebsites(): Array
     {
-        return $this->getquery('SELECT w FROM App\Entity\Website w WHERE w.status = 1 and w.include = 1 ORDER BY w.visited DESC', null , null, false, 3);
+        return $this->getquery('SELECT w FROM App\Entity\Website w WHERE w.status = 1 and w.include = 1 ORDER BY w.visited DESC', null , null, false, 5);
     }
     // Get Websites By Search Query
     public function searchQuery($parameter): Array
@@ -155,14 +155,14 @@ class MainController extends AbstractController
     }
 
     #[Route('/', name: 'app_main')]
-    public function index(): Response
+    public function index(Request $request): Response
     {
         // Pulling out the 3 most visited websites
         $websites = $this->getMostVisitedWebsites();
 
         return $this->render('index.html.twig',[
             'websites' => $websites,
-            'to_open' => 5
+            'ip' => $request->getClientIp()
         ]);
     }
     #[Route('/contact', name: 'contact')]
@@ -199,6 +199,8 @@ class MainController extends AbstractController
 
         $form = $this->createForm(ShortUrlFormType::class, $shorturl);
 
+        $activation = $this->settingsrespository->findBy(array('name' => 'Akceptacja linków'))[0]->getStatus();
+
         $form->handleRequest($request);
 
         // Adding new shorturl
@@ -211,7 +213,7 @@ class MainController extends AbstractController
                 $newshorturl->setUser($this->getUser());
                 $newshorturl->setVisited(0);
 
-                if($this->settingsrespository->findBy(array('name' => 'Akceptacja linków'))[0]->getStatus() == 0){
+                if($activation == 0){
                     $newshorturl->setStatus(1);
                 }else{
                     $newshorturl->setStatus(0);
@@ -226,14 +228,16 @@ class MainController extends AbstractController
             }else{
                 return $this->render('panel/shorturl.html.twig', [
                     'error' => 'Podany ciąg nie jest stroną!',
-                    'form' => $form->createView()
+                    'form' => $form->createView(),
+                    'activation' => $activation == 1 ? True : False,
                 ]);
             }
             
         }
         
         return $this->render('panel/shorturl.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'activation' => $activation == 1 ? True : False,
         ]);
     }
     #[Route('/websites/{mode}/{id}', methods: ['GET'], name: 'websites')]

@@ -17,15 +17,11 @@ class ShortUrlFormType extends AbstractType
             ->add('url', TextType::class, [
                 'label' => 'Podaj link do skrócenia'
             ])
-            ->add('include', CheckboxType::class,
-                array(
-                    'label' => 'Uwzględniaj w rankingu',
-                    'required' => false,
-                    'attr' => array(
-                        'class' => 'checkbox',
-                        'checked' => 'checked'
-                    )
-                )
+            ->add('include', CheckboxType::class, [
+                'label' => 'Uwzględniaj w rankingu',
+                'required' => false,
+                'attr' => ['style' => 'display:none;', 'checked' => 'checked'],
+            ]
             )
             #->add('shorturl')
             #->add('visited')

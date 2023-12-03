@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Użytkownicy{% endblock %}
+
+{% block home %}
+    <div class="admin">
+    <div class="users">
+    <a href="/admin" class="back"><i class="fa-solid fa-arrow-left"></i> Powrót</a>
+        <table>
+            <tbody>
+            <tr>
+                <th>ID</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Akcje</th>
+            </tr>
+            {% for user in users %}
+                <tr>
+                    <td><span>ID: </span>#{{loop.index}}</td>
+                    <td><span>Email: </span>{{user.email}}</td>
+
+                    {% if user.roles is iterable %}
+                        <td>
+                        {% for role in user.roles %}
+                            {% if role == "ROLE_USER" %}
+                                <span class="status" style="background:#f6b93b;">Użytkownik</span>
+                            {% endif %}
+                            {% if role == "ROLE_ADMIN" %}
+                                <span class="status" style="background:#FF6B6B;">Administrator</span>
+                            {% endif %}
+                            {% if role == "ROLE_MOD" %}
+                                <span class="status" style="background:#26de81;">Moderator</span>
+                            {% endif %}
+                            {% if role == "ROLE_BLOCKED" %}
+                                <span class="status" style="background:#a55eea;">Zablokowany</span>
+                            {% endif %}
+                        {% endfor %}
+                        </td>
+                    {% endif %}
+                    <td><a href="users/block/{{user.email}}" class="button block">{{"ROLE_BLOCKED" in user.roles ? "Odblokuj" : "Zablokuj"}}</a><a onClick="set_role('{{user.email}}')" class="button role">Zmień Role</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    </div>
+    <script>
+    function set_role(email){
+        Swal.fire({
+            icon: 'success',
+            title: 'Nadawanie roli',
+            input: 'select',
+            inputOptions: {
+                'Admin': 'Administrator',
+                'Mod': 'Moderator',
+                'User': 'Użytkownik'
+            },
+            inputPlaceholder: 'Wybierz role',
+            inputValidator: (value) => {
+                if(!value){
+                    return 'Musisz podać role!'
+                }
+            },
+            showCancelButton: true,
+            cancelButtonText: 'Anuluj',
+            cancelButtonColor: '#FF6B6B',
+            confirmButtonColor: '#45AAF2',
+            confirmButtonText: 'Tak, nadaj!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = "/admin/users/setrole/" + email + "/" + result.value;
+            }
+        })
+    }
+    </script>
+{% endblock %}

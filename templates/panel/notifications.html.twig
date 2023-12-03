@@ -1,20 +1,20 @@
+{% set to_read = 0 %}
 {% extends "base.html.twig" %}
 
-{% block title %}Strony{% endblock %}
+{% block title %}Powiadomienia{% endblock %}
 
 {% block home %}
-
-  <table class="rwd-table">
+  <table class="notifications">
     <tbody>
       <tr>
-        <th>Czas</th>
+        <th>Data</th>
         <th>Status</th>
         <th>Treść</th>
         <th>Akcje</th>
       </tr>
       {% if notifications is empty %}
         <tr>
-          <td data-th="Brak" colspan="4">Brak elementów do wyświetlenia</td>
+          <td class="empty" colspan="4">Brak elementów do wyświetlenia</td>
         </tr>
       {% else %}
         <tr>
@@ -32,24 +32,24 @@
           {% endif %}
           
           <tr>
-              <td data-th="Czas">{{ date|last }}</td>
+              <td class="time"><span>Czas: </span>{{ date|last }}</td>
               {% if item.status == 1 %}
-                  <td data-th="Status"><span class="status" style="background:#2ed573;color:#ffffff;padding:5px;border-radius:5px;">Sukces</span></td>
+                  <td><span class="status" style="background:#2ed573;">Sukces</span></td>
               {% elseif item.status == 2 %}
-                  <td data-th="Status"><span class="status" style="background:#ff4757;color:#ffffff;padding:5px;border-radius:5px;">Odrzucone</span></td>
+                  <td><span class="status" style="background:#FF6B6B;">Odrzucone</span></td>
               {% elseif item.status == 3 %}
-                  <td data-th="Status"><span class="status" style="background:#ff4757;color:#ffffff;padding:5px;border-radius:5px;">Usunięte</span></td>
+                  <td><span class="status" style="background:#FF6B6B;">Usunięte</span></td>
               {% elseif item.status == 4 %}
-                  <td data-th="Status"><span class="status" style="background:#45aaf2;color:#ffffff;padding:5px;border-radius:5px;">Informacja</span></td>
+                  <td><span class="status" style="background:#45aaf2;">Informacja</span></td>
               {% elseif item.status == 5 %}
-                  <td data-th="Status"><span class="status" style="background:#f6b93b;color:#ffffff;padding:5px;border-radius:5px;">Ostrzeżenie</span></td>
+                  <td><span class="status" style="background:#f6b93b;">Ostrzeżenie</span></td>
               {% endif %}
 
               {% autoescape %}
-                <td data-th="Treść"><b>{{ item.subject }}</b> {{ item.text|raw }}</td>
+                <td class="tresc"><span>Treść: </span><b>{{ item.subject }}</b> {{ item.text|raw }}</td>
               {% endautoescape %}
               
-              <td data-th="Akcje"><a href="/notifications/delete/{{item.id}}" class="button">Usuń</a></td>
+              <td><a href="/notifications/delete/{{item.id}}" class="delete-button">Usuń</a></td>
           </tr>
       {% endfor %}
 

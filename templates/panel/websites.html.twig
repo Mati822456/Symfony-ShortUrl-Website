@@ -3,59 +3,68 @@
 {% block title %}Strony{% endblock %}
 
 {% block home %}
-    <div class="search user">
-      <form action="/websites/search" method="GET">
-        <label>Szukaj</label>
-        <input type="text" name="query" value="{{ search != null ? search : "" }}">
-        <button type="submit" class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
-      </form>
-    </div>
-    <table class="rwd-table">
-    <tbody>
-      <tr>
-        <th>ID</th>
-        <th>Strona</th>
-        <th>Skrócony link</th>
-        <th>Odwiedzeń</th>
-        <th>W rankingu</th>
-        <th>Status</th>
-        <th>Akcje</th>
-      </tr>
-      {% if websites is empty %}
-        <tr>
-          <td data-th="Brak" colspan="7">Brak elementów do wyświetlenia</td>
+  <div class="websites">
+    <div class="search">
+        <form action="/websites/search" method="GET">
+          <label>Wyszukaj</label>
+          <input type="text" name="query" value="{{ search != null ? search : "" }}">
+          <button type="submit" class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </form>
+      </div>
+      <table>
+      <tbody>
+        {% if websites is empty %}
+          <tr>
+            <td class="empty" colspan="7">Brak elementów do wyświetlenia</td>
+          </tr>
+        {% endif %}
+        {% for item in websites %}
+          <tr>
+              <td><span>ID: </span>#{{loop.index}}</td>
+              <td class="url"><span>Url: </span>{{item.url|length > 50 ? item.url|slice(0, 50) ~ '...' : item.url}}</td>
+              {% if item.status == 2 %}
+                  <td><span class="status canceled">! {{item.shorturl}} !</span></td>
+              {% else %}
+                  <td class="url"><span>Skrócony: </span>http://{{ ip ~ ':8000/url/' ~ item.shorturl}}</td>
+              {% endif %}
+              {% if item.include == 0 %}
+                  <td><span class="status" style="background:#FF6B6B;">W rankingu</span></td>
+              {% else %}
+                  <td><span class="status" style="background:#45AAF2;">W rankingu</span></td>
+              {% endif %}
+              {% if item.status == 0 %}
+                  <td><span class="status" style="background:#f6b93b;">Oczekujące</span></td>
+              {% endif %}
+              {% if item.status == 1 %}
+                  <td><span class="status" style="background:#2ed573;">Zaakceptowane</span></td>
+              {% endif %}
+              {% if item.status == 2 %}
+                  <td><span class="status" style="background:#FF6B6B;">Odrzucone</span></td>
+              {% endif %}
+              <td class="views"><span>Odwiedzeń: </span>{{item.visited}} <i class="fa-solid fa-eye"></i></td>
+              <td>{% if item.status == 1 %}<a href="/url/{{ item.shorturl }}" target="_blank" class="button show">Pokaż</a><a href="/websites/include/{{item.hash}}" class="button change">Zmień</a>{% endif %}<a onClick="confirm_delete('{{item.hash}}')" class="button delete">Usuń</a></td>
         </tr>
-      {% endif %}
-      {% for item in websites %}
-        <tr>
-            <td data-th="ID">{{loop.index}}</td>
-            <td data-th="Strona">{{item.url|length > 50 ? item.url|slice(0, 50) ~ '...' : item.url}}</td>
-            {% if item.status == 2 %}
-                <td data-th="Powód"><span class="status canceled">! {{item.shorturl}} !</span></td>
-            {% else %}
-                <td data-th="Skrócony link">http://{{ ip ~ ':8000/url/' ~ item.shorturl}}</td>
-            {% endif %}
-            <td data-th="Odwiedzeń">{{item.visited}}</td>
-            {% if item.include == 0 %}
-                <td data-th="W rankingu"><span class="status" style="background:#f6b93b;color:#ffffff;padding:5px;border-radius:5px;">Nie</span></td>
-            {% else %}
-                <td data-th="W rankingu"><span class="status" style="background:#2ed573;color:#ffffff;padding:5px;border-radius:5px;">Tak</span></td>
-            {% endif %}
-            {% if item.status == 0 %}
-                <td data-th="Status"><span class="status" style="background:#f6b93b;color:#ffffff;padding:5px;border-radius:5px;">Oczekujące</span></td>
-            {% endif %}
-            {% if item.status == 1 %}
-                <td data-th="Status"><span class="status" style="background:#2ed573;color:#ffffff;padding:5px;border-radius:5px;">Zaakceptowane</span></td>
-            {% endif %}
-            {% if item.status == 2 %}
-                <td data-th="Status"><span class="status" style="background:#ff4757;color:#ffffff;padding:5px;border-radius:5px;">Odrzucone</span></td>
-            {% endif %}
-            
-            <td data-th="Akcje">{% if item.status == 1 %}<a href="/url/{{ item.shorturl }}" target="_blank" class="button" style="background:#45aaf2;">Pokaż</a><a href="/websites/include/{{item.hash}}" class="button" style="background:#f6b93b;">Zmień</a>{% endif %}<a onClick="confirm_delete('{{item.hash}}')" class="button">Usuń</a></td>
-      </tr>
-      {% endfor %}
-      
-    </tbody>
-  </table>
-
+        {% endfor %}
+        
+      </tbody>
+    </table>
+  </div>
+  <script>
+    function confirm_delete(unique_id){
+            Swal.fire({
+                title: 'Czy jesteś pewien?',
+                text: "Nie będzie można tego cofnąć!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#45AAF2',
+                cancelButtonColor: '#ff6b6b',
+                cancelButtonText: 'Anuluj',
+                confirmButtonText: 'Tak, usuń to!'
+                }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location = "/websites/delete/" + unique_id;
+                }
+                })
+        }
+  </script>
 {% endblock %}

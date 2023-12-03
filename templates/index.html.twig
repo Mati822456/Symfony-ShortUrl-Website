@@ -3,29 +3,33 @@
 {% block title %}Witaj Podróżniku!{% endblock %}
 
 {% block home %}
-    {% if not app.user %}
-        <div class="welcome">Aby utworzyć skrócony link <a href="login" style="color:#ff6b6b;">Zaloguj się</a> lub <a href="register" style="color:#EAB543;">Utwórz konto!</a></div>
-    {% else %}
-        <div class="welcome">Aby utworzyć skrócony link przejdź tu: <a href="shorturl" style="color:#ff9f43;">Skróć Link</a></div>
-    {% endif %}
-    
-    <div class="welcome_2">Najczęściej Wyświetlane strony</div>
-    <table class="styled rwd-table">
-        <tbody>
-            <th>Url</th>
-            <th>Wyświetleń</th>
-            <th>Akcje</th>
-        
-        
-            {% for web in websites %}
-                <tr>
-                    <td data-th="Url">http://127.0.0.1:8000/url/{{ web.shorturl }}</td>
-                    <td data-th="Wyświetleń">{{ web.visited }}</td>
-                    <td data-th="Akcje"><a href="url/{{ web.shorturl }}" class="button" style="margin:0;" target="_blank">Pokaż</a></td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="split">
+        <div class="left">
+            <div class="welcome">Witaj<br/>{{ app.user ? app.user.email : "Podróżniku!" }}</div>
+            <div class="tip">Aby stworzyć skrócony link</div>
+            {% if app.user %}
+                <a href="/shorturl" class="shorten-button">Skróć link</a>
+            {% else %}
+                <a href="/login" class="login">Zaloguj</a>
+                <a href="/register" class="register">Utwórz konto</a>
+            {% endif %}
+        </div>
+        <div class="line"> </div>
+        <div class="right">
+            <div class="info">Popularne linki</div>
+            <table>
+                {% for web in websites %}
+                    <tr>
+                        <td class="id">#{{ loop.index }}</td>
+                        <td class="url"><span>Url: </span>http://{{ ip ~ ':8000/url/' ~ web.shorturl}}</td>
+                        <td class="views"><span>Odwiedzeń: </span>{{ web.visited }} <i class="fa-solid fa-eye"></i></td>
+                        <td><a href="url/{{ web.shorturl }}" class="goto">Przejdź</a></td>
+                        <td></td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
 {% endblock %}
 
 

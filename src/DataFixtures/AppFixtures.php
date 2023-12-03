@@ -79,6 +79,25 @@ class AppFixtures extends Fixture
         $youtube->setCreatedDate(date("d-m-Y H:i:s"));
         $youtube->setInclude(1);
 
+        $noweLinki = [];
+        for ($i = 0; $i < 6; $i++) {
+            $nowyLink = new Website();
+            $nowyLink->setUrl("https://nowy-link-$i.com/");
+            $nowyLink->setShorturl($this->generateRandom());
+            $nowyLink->setHash($this->generateRandom());
+            $nowyLink->setStatus(1);
+            $nowyLink->setUser($user);
+            $nowyLink->setVisited(random_int(0, 1000));
+            $nowyLink->setCreatedDate(date("d-m-Y H:i:s"));
+            $nowyLink->setInclude(1);
+            
+            $noweLinki[] = $nowyLink;
+        }
+
+        foreach ($noweLinki as $nowyLink) {
+            $manager->persist($nowyLink);
+        }
+
         $setting = new Settings();
         $setting->setName("Akceptacja linków");
         $setting->setStatus(0);

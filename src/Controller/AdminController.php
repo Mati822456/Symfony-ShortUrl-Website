@@ -312,7 +312,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/users/{mode}/{user}/{role}', name: 'admin_users')]
+    #[Route('/admin/users/{mode}/{user}/{role}', name: 'admin_users')]
     public function users($mode = null, $user = null, $role = null): Response
     {
         // BLocking User
@@ -330,13 +330,13 @@ class AdminController extends AbstractController
             return $this->render('pagenotfound.html.twig');
         }
 
-        return $this->render('admin/index.html.twig',[
+        return $this->render('admin/users.html.twig',[
             'users' => $users
         ]);
     }
 
 
-    #[Route('/webadm/{mode}/{param}/{reason}', methods: ['GET'], name: 'admin_websites')]
+    #[Route('/admin/websites/{mode}/{param}/{reason}', methods: ['GET'], name: 'admin_websites')]
     public function webadm($mode = null, $param = null, $reason = null, Request $request = null): Response
     {
         // Get Status Of Given Setting
@@ -372,13 +372,13 @@ class AdminController extends AbstractController
             return $this->render('pagenotfound.html.twig');
         }
 
-        return $this->render('admin/index.html.twig', [
+        return $this->render('admin/websites.html.twig', [
             'websites' => $websites,
             'links' => $setting,
             'search' => $query
         ]);
     }
-    #[Route('/messages/{mode}/{param}', name: 'admin_messages')]
+    #[Route('/admin/messages/{mode}/{param}', name: 'admin_messages')]
     public function messages($mode = null, $param = null, Request $request = null): Response
     {
         if($mode == "read"){
@@ -403,13 +403,13 @@ class AdminController extends AbstractController
             return $this->render('pagenotfound.html.twig');
         }
         
-        return $this->render('admin/index.html.twig', [
+        return $this->render('admin/messages.html.twig', [
             'messages' => $messages,
             'search' => $param
         ]);
     }
 
-    #[Route('/settings/{mode}/{id}', name: 'admin_settings')]
+    #[Route('/admin/settings/{mode}/{id}', name: 'admin_settings')]
     public function settings($mode = null, $id = null): Response
     {
         if($mode == "status"){
@@ -423,7 +423,7 @@ class AdminController extends AbstractController
             return $this->render('pagenotfound.html.twig');
         }
         
-        return $this->render('admin/index.html.twig',[
+        return $this->render('admin/settings.html.twig',[
             'settings' => $settings
         ]);
     }

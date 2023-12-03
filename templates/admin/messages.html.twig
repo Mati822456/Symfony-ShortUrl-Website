@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Wiadomości{% endblock %}
+
+{% block home %}
+    <div class="admin">
+    <div class="messages">
+        <a href="/admin" class="back"><i class="fa-solid fa-arrow-left"></i> Powrót</a>
+        <div class="search user">
+            <form action="/admin/messages/search" method="GET">
+                <label>Szukaj</label>
+                <input type="text" name="query" value="{{ search != null ? search : "" }}">
+                <button type="submit" class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </form>
+        </div>
+        <table>
+            <tbody>
+            <tr>
+                <th>ID</th>
+                <th>Imię</th>
+                <th>Email</th>
+                <th>Temat</th>
+                <th>Wiadomość</th>
+                <th>Status</th>
+                <th>Akcje</th>
+            </tr>
+            {% if messages is empty %}
+                <tr>
+                    <td class="empty" colspan="7">Brak elementów do wyświetlenia</td>
+                </tr>
+            {% endif %}
+            {% for item in messages %}
+                <tr>
+                    <td><span>ID: </span>#{{loop.index}}</td>
+                    <td><span>Imię: </span>{{item.name}}</td>
+                    <td><span>Email: </span>{{item.email}}</td>
+                    <td><span>Temat: </span>{{item.subject}}</td>
+                    <td><span>Wiadomość: </span>{{item.message|length > 30 ? item.message|slice(0, 30) ~ '...' : item.message}}</td>
+                    {% if item.visited == 0 %}
+                        <td><span class="status" style="background:#f6b93b;">Nie odczytane</span></td>
+                    {% else %}
+                        <td><span class="status" style="background:#2ed573;">Odczytane</span></td>
+                    {% endif %}
+                    <td><a onClick="read_message({{item.id}}, '{{item.subject}}' ,'{{item.message}}', {{item.visited == 0 ? "false" : "true"}})" class="button read">Przeczytaj</a><a onClick="confirm_delete_message('{{item.id}}')" class="button delete">Usuń</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    </div>
+    <script>
+    function confirm_delete_message(id){
+        Swal.fire({
+            title: 'Czy jesteś pewien?',
+            text: "Nie będzie można tego cofnąć!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#45AAF2',
+            cancelButtonColor: '#FF6B6B',
+            cancelButtonText: 'Anuluj',
+            confirmButtonText: 'Tak, usuń to!'
+            }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = "/admin/messages/delete/" + id;
+            }
+        })
+    }
+    function read_message(id, subject , message, visited){
+        Swal.fire({
+            title: subject,
+            input: 'textarea',
+            inputLabel: 'Wiadomość',
+            inputAttributes: {
+                'height': '30em'
+            },
+            inputValue: message,
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Przeczytane!',
+            showCancelButton: false,
+            allowOutsideClick: false
+        }).then((result) => {
+            if(result.isConfirmed && visited == false){
+                window.location = "/admin/messages/status/" + id;
+            }
+        })
+        Swal.disableInput();
+    }
+    </script>
+{% endblock %}

@@ -1,15 +1,23 @@
-{% extends 'base.html.twig' %}
-
-{% block title %}Utwórz konto!{% endblock %}
-
-{% block body %}
-    <div class="bg-image" style="background-image: url('{{asset('images/background2.jpg')}}');"></div>
-
+<!DOCTYPE html>
+<html>
+<head>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Zarejestruj się!{% endblock %}</title>
+        <link rel="icon" type="image/x-icon" href="{{ asset('images/logo.png') }}">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href=" {{ asset('build/app.css') }}">
+        <script src="https://kit.fontawesome.com/15901ecbea.js" crossorigin="anonymous"></script>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    </head>
+</head>
+<body>
     <div class="form-page">
 
     {{ form_start(registrationForm) }}
         
         <h1>Utwórz konto!</h1>
+        <div class="line"></div>
         {{ form_row(registrationForm.email) }}
         {{ form_row(registrationForm.plainPassword, {
             label: 'Hasło'
@@ -20,4 +28,5 @@
         <p class="message">Posiadasz już konto? <a href="login">Zaloguj się</a></p>
     {{ form_end(registrationForm) }}
     </div>
-{% endblock %}
+</body>
+</html>

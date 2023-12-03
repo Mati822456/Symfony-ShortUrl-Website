@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Użytkownicy{% endblock %}
+
+{% block home %}
+    <div class="admin">
+    <div class="settings">
+        <a href="/admin" class="back"><i class="fa-solid fa-arrow-left"></i> Powrót</a>
+        <table>
+            <tbody>
+            <tr>
+                <th>ID</th>
+                <th>Nazwa</th>
+                <th>Status</th>
+                <th>Akcje</th>
+            </tr>
+            {% for setting in settings %}
+                <tr>
+                    <td><span>ID: </span>#{{loop.index}}</td>
+                    <td><span>Nazwa: </span>{{setting.name}}</td>
+                    {% if setting.status == 1 %}
+                        <td><span class="status" style="background:#2ed573;">Uruchomione</span></td>
+                    {% else %}
+                        <td><span class="status" style="background:#FF6B6B;">Wyłączone</span></td>
+                    {% endif %}
+                    <td><a href="/admin/settings/status/{{ setting.id }}" class="button chnage">Zmień</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    </div>
+{% endblock %}

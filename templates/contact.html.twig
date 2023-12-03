@@ -3,10 +3,23 @@
 {% block title %}Wyślij Wiadomość!{% endblock %}
 
 {% block home %}
-    <div class="form-page-2">
-    {{form_start(form)}}
-        {{form_widget(form)}}
-        <button type="submit" class="create-button">Wyślij</button>
-    {{form_end(form)}}
+    <div class="split">
+        <div class="left">
+            <div class="welcome">Witaj<br/>{{ app.user ? app.user.email : "Podróżniku!" }}</div>
+            <div class="tip">Aby stworzyć skrócony link</div>
+            {% if app.user %}
+                <a href="/shorturl" class="shorten-button">Skróć link</a>
+            {% else %}
+                <a href="/login" class="login">Zaloguj</a>
+                <a href="/register" class="register">Utwórz konto</a>
+            {% endif %}
+        </div>
+        <div class="line"> </div>
+        <div class="right">
+            {{form_start(form)}}
+                {{form_widget(form)}}
+                <button type="submit" class="button">Wyślij</button>
+            {{form_end(form)}}
+        </div>
     </div>
 {% endblock %}

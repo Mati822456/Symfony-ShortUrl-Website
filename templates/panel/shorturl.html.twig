@@ -1,20 +1,35 @@
 {% extends "base.html.twig" %}
 {% block title %}Skróć Link{% endblock %}
 {% block home %}
-    <div class="form-page-2">
+    <div class="shorten">
     {{form_start(form)}}
+        {% if activation %}
+            <div class="info">Linki muszą zostać zatwierdzone przez administratora.</div>
+        {% endif %}
         <div class="error">{{ error is defined ? error : '' }}</div>
         {{form_label(form.url)}}
         {{form_widget(form.url)}}
         {{form_label(form.include)}}
-        <div class="button-cover">
-            <div class="button r" id="button-1">
-            {{form_widget(form.include)}}
-            <div class="knobs"></div>
-            <div class="layer"></div>
-            </div>
-        </div>
+        {{form_widget(form.include)}}
+        <button type="button" class="ranking" onClick="changeRanking();">TAK</button>
+        <div class="line"></div>
         <button type="submit" class="create-button">Skróć</button>
     {{form_end(form)}}
     </div>
+    <script>
+        function changeRanking(){
+             let checkbox = document.querySelector("#short_url_form_include");
+             let button = document.querySelector(".ranking");
+
+             if (checkbox.checked) {
+                checkbox.checked = false;
+                button.style.background = "#e74c3c";
+                button.innerHTML = "NIE";
+             } else {
+                checkbox.checked = true;
+                button.style.background = "#45aaf2";
+                button.innerHTML = "TAK";
+             }
+        }
+    </script>
 {% endblock %}
