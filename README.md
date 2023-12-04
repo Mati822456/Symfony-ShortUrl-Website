@@ -106,7 +106,7 @@ I'm constantly working on this project. I want to add some new features. :)
 - pagination
 - RESTful API
 - asynchronous request
-- dark mode
+- ~~dark mode~~
 
 ## Acknowledgements
 

@@ -6,8 +6,33 @@
   font-family: 'Poppins', sans-serif;
 }
 
-$panel-color: #ffffff;
-$shadow-color: #dfe4ea;
+$body-color-light: #fbf8f1;
+$panel-color-light: #ffffff;
+$shadow-color-light: #dfe4ea;
+$text-color-light: rgba(0, 0, 0, 0.6);
+$input-color-light: #000000;
+$input-background-light: #f2f2f2;
+$nav-button-background-light: #f2f2f2;
+$table-row-color-light: rgba(0, 0, 0, 0.4);
+$table-row-background-light: rgba(242, 242, 242, 0.8);
+$line-color-light: #d1d8e0;
+$card-background-light: #f6f5ff;
+$card-background-hover-light: #dddce5;
+$menu-background-light: rgba(223, 228, 234, 0.4);
+
+$body-color-dark: #18191a;
+$panel-color-dark: #242526;
+$shadow-color-dark: #201b15;
+$text-color-dark: rgba(255, 255, 255, 0.6);
+$input-color-dark: #ffffff;
+$input-background-dark: #3a3b3c;
+$nav-button-background-dark: #2d2e2f;
+$table-row-color-dark: #cccccc;
+$table-row-background-dark: #303233;
+$line-color-dark: #3a3b3c;
+$card-background-dark: #2d2e2f;
+$card-background-hover-dark: #424243;
+$menu-background-dark: rgba(66, 66, 67, 0.4);
 
 // Small tablets and large smartphones (landscape view)
 $screen-sm-min: 576px;
@@ -46,22 +71,52 @@ $screen-xl-min: 1200px;
   }
 }
 
+html[data-theme='light'] {
+  --body-color: #{$body-color-light};
+  --panel-color: #{$panel-color-light};
+  --shadow-color: #{$shadow-color-light};
+  --text-color: #{$text-color-light};
+  --input-color: #{$input-color-light};
+  --input-background: #{$input-background-light};
+  --nav-button-background: #{$nav-button-background-light};
+  --table-row-color: #{$table-row-color-light};
+  --table-row-background: #{$table-row-background-light};
+  --line-color: #{$line-color-light};
+  --card-background: #{$card-background-light};
+  --card-background-hover: #{$card-background-hover-light};
+  --menu-background: #{$menu-background-light};
+}
+html[data-theme='dark'] {
+  --body-color: #{$body-color-dark};
+  --panel-color: #{$panel-color-dark};
+  --shadow-color: #{$shadow-color-dark};
+  --text-color: #{$text-color-dark};
+  --input-color: #{$input-color-dark};
+  --input-background: #{$input-background-dark};
+  --nav-button-background: #{$nav-button-background-dark};
+  --table-row-color: #{$table-row-color-dark};
+  --table-row-background: #{$table-row-background-dark};
+  --line-color: #{$line-color-dark};
+  --card-background: #{$card-background-dark};
+  --card-background-hover: #{$card-background-hover-dark};
+  --menu-background: #{$menu-background-dark};
+}
 body {
-  background-color: #fbf8f1;
+  background-color: var(--body-color);
 }
 
 header {
   width: 90%;
-  background-color: $panel-color;
+  background-color: var(--panel-color);
   border-radius: 15px;
   margin: 20px auto;
   display: flex;
   flex-direction: row;
   //   justify-content: space-evenly;
   align-items: center;
-  -webkit-box-shadow: 0px 4px 17px 0px $shadow-color;
-  -moz-box-shadow: 0px 4px 17px 0px $shadow-color;
-  box-shadow: 0px 4px 17px 0px $shadow-color;
+  -webkit-box-shadow: 0px 4px 17px 0px var(--shadow-color);
+  -moz-box-shadow: 0px 4px 17px 0px var(--shadow-color);
+  box-shadow: 0px 4px 17px 0px var(--shadow-color);
 
   img {
     width: 48px;
@@ -80,7 +135,7 @@ header {
     z-index: 100;
     top: 0;
     left: 0;
-    background: rgba(223, 228, 234, 0.4);
+    background: var(--menu-background);
     backdrop-filter: blur(5px);
     font-size: 20px;
     display: none; // flex
@@ -117,14 +172,14 @@ header {
       height: 2px;
       border-radius: 2px;
       width: 200px;
-      background: #d1d8e0;
+      background: var(--line-color);
       @include lg {
         height: 40px;
         width: 2px;
       }
     }
     a {
-      color: rgba(0, 0, 0, 0.6);
+      color: var(--text-color);
       text-decoration: none;
       font-weight: 500;
       padding: 5px;
@@ -140,13 +195,14 @@ header {
         font-weight: 700;
       }
       &:hover {
-        background: #f2f2f2;
+        background: var(--nav-button-background);
       }
     }
   }
   .menu {
     margin: auto;
-    background-color: #f2f2f2;
+    background-color: var(--nav-button-background);
+    color: var(--text-color);
     padding: 11px;
     border-radius: 10px;
 
@@ -162,6 +218,19 @@ header {
     a {
       text-decoration: none;
     }
+    .mode {
+      display: flex;
+      height: 52px;
+      width: 52px;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      background-color: var(--nav-button-background);
+      font-size: 24px;
+      color: var(--text-color);
+      margin-right: 10px;
+      cursor: pointer;
+    }
     .notifications {
       width: 48px;
       height: 48px;
@@ -169,14 +238,10 @@ header {
       justify-content: center;
       align-items: center;
       border-radius: 50%;
-      background-color: #f2f2f2;
+      background-color: var(--nav-button-background);
       position: relative;
 
-      @include md {
-        margin-right: 20px;
-      }
       @include xl {
-        margin-right: 40px;
         width: 52px;
         height: 52px;
       }
@@ -199,7 +264,7 @@ header {
 
       i {
         font-size: 24px;
-        color: rgba(0, 0, 0, 0.6);
+        color: var(--text-color);
       }
     }
     .log {
@@ -216,7 +281,7 @@ header {
       }
 
       @include lg {
-        margin-left: 0;
+        margin-left: 20px;
         margin-right: 40px;
         font-size: 20px;
         border-radius: 30px;
@@ -229,16 +294,16 @@ header {
 section.center {
   width: 90%;
   min-height: calc(100vh - 40px - 68px - 40px - 68px);
-  background-color: $panel-color;
+  background-color: var(--panel-color);
   border-radius: 15px;
   margin: auto;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  -webkit-box-shadow: 0px 4px 17px 0px $shadow-color;
-  -moz-box-shadow: 0px 4px 17px 0px $shadow-color;
-  box-shadow: 0px 4px 17px 0px $shadow-color;
+  -webkit-box-shadow: 0px 4px 17px 0px var(--shadow-color);
+  -moz-box-shadow: 0px 4px 17px 0px var(--shadow-color);
+  box-shadow: 0px 4px 17px 0px var(--shadow-color);
 
   @include sm {
     min-height: calc(100vh - 40px - 92px - 40px - 92px);
@@ -256,7 +321,7 @@ section.center {
     height: 600px;
     border-radius: 2px;
     width: 2px;
-    background: #d1d8e0;
+    background: var(--line-color);
   }
 
   .split {
@@ -278,7 +343,7 @@ section.center {
         padding: 0 30px;
       }
       .welcome {
-        color: rgba(0, 0, 0, 0.6);
+        color: var(--text-color);
         font-size: 1.5em;
         font-weight: 700;
 
@@ -380,8 +445,8 @@ section.center {
 
         tr {
           border-radius: 10px;
-          background: rgba(242, 242, 242, 0.8);
-          color: rgba(0, 0, 0, 0.4);
+          background: var(--table-row-background);
+          color: var(--table-row-color);
           font-size: 20px;
           font-weight: 500;
 
@@ -480,7 +545,7 @@ section.center {
       height: 2px;
       border-radius: 2px;
       width: calc(100% - 40px);
-      background: #d1d8e0;
+      background: var(--line-color);
 
       @include md {
         height: 600px;
@@ -501,7 +566,7 @@ section.center {
       }
 
       label {
-        color: #606060;
+        color: var(--text-color);
         font-size: 16px;
         font-weight: 600;
 
@@ -517,7 +582,8 @@ section.center {
         padding: 10px;
         border-radius: 10px;
         border: none;
-        background: #f2f2f2;
+        background: var(--input-background);
+        color: var(--input-color);
         @include md {
           font-size: 16px;
         }
@@ -587,8 +653,8 @@ section.center {
       display: block;
       margin: 10px 0;
       border-radius: 10px;
-      background: rgba(242, 242, 242, 0.8);
-      color: rgba(0, 0, 0, 0.4);
+      background: var(--table-row-background);
+      color: var(--table-row-color);
       font-size: 20px;
       font-weight: 500;
 
@@ -597,7 +663,7 @@ section.center {
       }
 
       th {
-        color: rgba(0, 0, 0, 0.4);
+        color: var(--table-row-color);
         font-size: 20px;
         font-weight: 700;
         text-align: left;
@@ -664,7 +730,7 @@ section.center {
         }
         &.date {
           border-radius: 5px;
-          color: rgba(0, 0, 0, 0.2);
+          color: var(--text-color);
           text-align: center;
           font-size: 14px;
           font-weight: 500;
@@ -809,7 +875,7 @@ section.center {
         align-items: center;
       }
       label {
-        color: #606060;
+        color: var(--text-color);
         font-size: 16px;
         display: inline-block;
         width: 80px;
@@ -818,7 +884,8 @@ section.center {
       }
       input {
         border-radius: 10px;
-        background: #f2f2f2;
+        background: var(--input-background);
+        color: var(--input-color);
         border: none;
         padding: 8px;
         height: 42px;
@@ -880,7 +947,7 @@ section.center {
       }
 
       label {
-        color: #606060;
+        color: var(--text-color);
         font-size: 16px;
         font-weight: 600;
         &:nth-of-type(2) {
@@ -894,7 +961,8 @@ section.center {
       input {
         border-radius: 10px;
         border: none;
-        background: #f2f2f2;
+        background: var(--input-background);
+        color: var(--input-color);
         font-size: 14px;
         padding: 10px;
 
@@ -938,7 +1006,7 @@ section.center {
         margin: 10px auto;
         border-radius: 2px;
         height: 2px;
-        background: #d1d8e0;
+        background: var(--line-color);
       }
     }
   }
@@ -972,7 +1040,7 @@ section.center {
       border-radius: 2px;
       width: calc(100% - 40px);
       margin: 10px auto;
-      background: #d1d8e0;
+      background: var(--line-color);
 
       @include md {
         width: 2px;
@@ -1032,7 +1100,7 @@ section.center {
           margin: 5px auto;
           height: 2px;
           border-radius: 2px;
-          background: #d1d8e0;
+          background: var(--line-color);
         }
         .date {
           color: rgba(255, 255, 255, 0.9);
@@ -1045,12 +1113,12 @@ section.center {
         }
 
         &.action {
-          background: #f6f5ff;
+          background: var(--card-background);
           cursor: pointer;
           i {
             margin-top: 3px;
             font-size: 24px;
-            color: rgba(0, 0, 0, 0.5);
+            color: var(--text-color);
 
             @include md {
               font-size: 48px;
@@ -1058,17 +1126,17 @@ section.center {
           }
           .info {
             margin: 6px 0;
-            color: rgba(0, 0, 0, 0.6);
+            color: var(--text-color);
 
             @include md {
               margin: 10px 0;
             }
           }
           .line-small {
-            background: rgba(0, 0, 0, 0.4);
+            background: var(--text-color);
           }
           .footer {
-            color: rgba(0, 0, 0, 0.4);
+            color: var(--text-color);
             font-size: 13px;
             font-weight: 400;
 
@@ -1077,7 +1145,7 @@ section.center {
             }
           }
           &:hover {
-            background: #dddce5;
+            background: var(--card-background-hover);
           }
         }
       }
@@ -1109,7 +1177,7 @@ section.center {
 
       a.back {
         text-decoration: none;
-        color: rgba(0, 0, 0, 0.6);
+        color: var(--text-color);
         font-size: 20px;
         font-weight: 600;
         margin-left: 20px;
@@ -1181,7 +1249,7 @@ section.center {
 
       a.back {
         text-decoration: none;
-        color: rgba(0, 0, 0, 0.6);
+        color: var(--text-color);
         font-size: 20px;
         font-weight: 600;
         margin-left: 20px;
@@ -1196,7 +1264,7 @@ section.center {
           align-items: center;
         }
         label {
-          color: #606060;
+          color: var(--text-color);
           font-size: 16px;
           display: inline-block;
           width: 80px;
@@ -1205,7 +1273,8 @@ section.center {
         }
         input {
           border-radius: 10px;
-          background: #f2f2f2;
+          background: var(--input-background);
+          color: var(--input-color);
           border: none;
           padding: 8px;
           height: 42px;
@@ -1293,7 +1362,7 @@ section.center {
 
       a.back {
         text-decoration: none;
-        color: rgba(0, 0, 0, 0.6);
+        color: var(--text-color);
         font-size: 20px;
         font-weight: 600;
         margin-left: 20px;
@@ -1348,7 +1417,7 @@ section.center {
 
       a.back {
         text-decoration: none;
-        color: rgba(0, 0, 0, 0.6);
+        color: var(--text-color);
         font-size: 20px;
         font-weight: 600;
         margin-left: 20px;
@@ -1412,7 +1481,7 @@ section.center {
 footer {
   width: 90%;
   height: 68px;
-  background-color: $panel-color;
+  background-color: var(--panel-color);
   border-radius: 15px;
   margin: 20px auto;
   display: flex;
@@ -1421,9 +1490,11 @@ footer {
   justify-content: center;
   text-align: center;
   font-size: 14px;
-  -webkit-box-shadow: 0px 4px 17px 0px $shadow-color;
-  -moz-box-shadow: 0px 4px 17px 0px $shadow-color;
-  box-shadow: 0px 4px 17px 0px $shadow-color;
+  font-weight: 500;
+  -webkit-box-shadow: 0px 4px 17px 0px var(--shadow-color);
+  -moz-box-shadow: 0px 4px 17px 0px var(--shadow-color);
+  box-shadow: 0px 4px 17px 0px var(--shadow-color);
+  color: var(--text-color);
 
   @include sm {
     height: 92px;
@@ -1441,12 +1512,12 @@ footer {
   form {
     display: grid;
     width: calc(100% - 20px);
-    background: $panel-color;
+    background: var(--panel-color);
     padding: 50px 40px;
     border-radius: 15px;
-    -webkit-box-shadow: 0px 4px 17px 0px $shadow-color;
-    -moz-box-shadow: 0px 4px 17px 0px $shadow-color;
-    box-shadow: 0px 4px 17px 0px $shadow-color;
+    -webkit-box-shadow: 0px 4px 17px 0px var(--shadow-color);
+    -moz-box-shadow: 0px 4px 17px 0px var(--shadow-color);
+    box-shadow: 0px 4px 17px 0px var(--shadow-color);
 
     @include md {
       width: 500px;
@@ -1472,7 +1543,7 @@ footer {
       }
     }
     h1 {
-      color: rgba(0, 0, 0, 0.6);
+      color: var(--text-color);
       font-size: 40px;
       font-weight: 700;
 
@@ -1481,7 +1552,7 @@ footer {
       }
     }
     label {
-      color: #606060;
+      color: var(--text-color);
       font-size: 20px;
       font-weight: 600;
 
@@ -1493,7 +1564,8 @@ footer {
     input[type='password'],
     input[type='text'] {
       border-radius: 10px;
-      background: #f2f2f2;
+      background: var(--input-background);
+      color: var(--input-color);
       padding: 10px;
       font-size: 16px;
       border: none;
@@ -1528,7 +1600,7 @@ footer {
       width: 100%;
       border-radius: 2px;
       height: 2px;
-      background: #d1d8e0;
+      background: var(--line-color);
 
       @include md {
         width: 400px;
