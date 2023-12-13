@@ -6,7 +6,11 @@
         {% if activation %}
             <div class="info">Linki muszą zostać zatwierdzone przez administratora.</div>
         {% endif %}
-        <div class="error">{{ error is defined ? error : '' }}</div>
+        <div class="error">
+            {% for notice in app.flashes('error') %}
+                {{ notice }}
+            {% endfor %}
+        </div>
         {{form_label(form.url)}}
         {{form_widget(form.url)}}
         {{form_label(form.include)}}

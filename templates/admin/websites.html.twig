@@ -7,12 +7,12 @@
     <div class="websites">
         <a href="/admin" class="back"><i class="fa-solid fa-arrow-left"></i> Powrót</a>
         <div class="search">
-            <form action="/admin/websites/search" method="GET">
+            <form action="/admin/websites" method="GET">
                 <label>Szukaj</label>
-                <input type="text" name="query" value="{{ search != null ? search : "" }}">
+                <input type="text" name="q" value="{{ search != null ? search : "" }}">
                 <button type="submit" class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
-                <a href="/admin/websites/today"><button class="search-btn margin" type="button"><i class="fa-solid fa-calendar-day"></i></button></a>
-                <a href="/admin/websites/accept"><button class="search-btn margin-2" type="button"><i class="fa-solid fa-check"></i></button></a>
+                <a href="/admin/websites?filter=today"><button class="search-btn margin" type="button"><i class="fa-solid fa-calendar-day"></i></button></a>
+                <a href="/admin/websites?filter=accept"><button class="search-btn margin-2" type="button"><i class="fa-solid fa-check"></i></button></a>
             </form>
         </div>
         <table>
@@ -56,7 +56,7 @@
                     <td>
                         <a href="{{item.url}}" target="_blank" class="button show">Pokaż</a>
                         {% if item.status == 0 %}
-                            <a href="/admin/websites/status/{{ item.hash }}" class="button accept">Akceptuj</a>
+                            <a onclick="accept_website('{{ item.hash }}');" class="button accept">Akceptuj</a>
                         {% endif %}
                         <a onClick="{{ item.status == 0 ? 'cancel_website("' ~ item.hash ~ '")' : 'confirm_delete("' ~ item.hash ~ '")' }}" class="button delete">{{ item.status == 0 ? ("/admin/websites" in app.request.pathinfo ? "Odrzuć" : "") : "Usuń" }}</a>
                     </td>
@@ -64,9 +64,24 @@
             {% endfor %}
             </tbody>
         </table>
+        <form id="patchForm" method="POST">
+            <input name="_method" type="hidden" value="PATCH">
+            <input type="hidden" name="status" id="statusInput" value="0">
+            <input type="hidden" name="reason" id="reasonInput" value="">
+        </form>
+        <form id="deleteForm" method="POST">
+            <input name="_method" type="hidden" value="DELETE">
+        </form>
     </div>
     </div>
     <script>
+    function accept_website(unique_id){
+        var patchForm = document.getElementById('patchForm');
+        patchForm.action = "/admin/websites/" + unique_id;
+        document.getElementById("statusInput").value = 1;
+        document.getElementById("reasonInput").value = "";
+        patchForm.submit();
+    }
     function cancel_website(unique_id){
         Swal.fire({
             icon: 'warning',
@@ -85,7 +100,11 @@
             confirmButtonText: 'Tak, odrzuć!'
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location = "/admin/websites/cancel/" + unique_id + "/" + result.value;
+                var patchForm = document.getElementById('patchForm');
+                patchForm.action = "/admin/websites/" + unique_id;
+                document.getElementById("statusInput").value = 2;
+                document.getElementById("reasonInput").value = result.value;
+                patchForm.submit();
             }
         })
     }
@@ -101,7 +120,9 @@
             confirmButtonText: 'Tak, usuń to!'
             }).then((result) => {
             if (result.isConfirmed) {
-                window.location = "/admin/websites/delete/" + unique_id;
+                var deleteForm = document.getElementById('deleteForm');
+                deleteForm.action = "/admin/websites/" + unique_id;
+                deleteForm.submit();
             }
             })
     }

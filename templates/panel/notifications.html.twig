@@ -49,11 +49,20 @@
                 <td class="tresc"><span>Treść: </span><b>{{ item.subject }}</b> {{ item.text|raw }}</td>
               {% endautoescape %}
               
-              <td><a href="/notifications/delete/{{item.id}}" class="delete-button">Usuń</a></td>
+              <td><a onclick="delete_notification('{{ item.id }}');" class="delete-button">Usuń</a></td>
           </tr>
       {% endfor %}
 
     </tbody>
   </table>
-
+    <form method="POST" id="deleteForm">
+        <input type="hidden" name="_method" value="DELETE">
+    </form>
+    <script>
+        function delete_notification(id){
+            let form = document.querySelector('#deleteForm');
+            form.action = "/notifications/" + id;
+            form.submit();
+        }
+    </script>
 {% endblock %}

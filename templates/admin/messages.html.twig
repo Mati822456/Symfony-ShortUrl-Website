@@ -7,9 +7,9 @@
     <div class="messages">
         <a href="/admin" class="back"><i class="fa-solid fa-arrow-left"></i> Powrót</a>
         <div class="search user">
-            <form action="/admin/messages/search" method="GET">
+            <form action="/admin/messages" method="GET">
                 <label>Szukaj</label>
-                <input type="text" name="query" value="{{ search != null ? search : "" }}">
+                <input type="text" name="q" value="{{ search != null ? search : "" }}">
                 <button type="submit" class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
             </form>
         </div>
@@ -46,6 +46,12 @@
             {% endfor %}
             </tbody>
         </table>
+        <form method="POST" id="patchForm">
+            <input type="hidden" name="_method" value="PATCH">
+        </form>
+        <form method="POST" id="deleteForm">
+            <input type="hidden" name="_method" value="DELETE">
+        </form>
     </div>
     </div>
     <script>
@@ -61,7 +67,9 @@
             confirmButtonText: 'Tak, usuń to!'
             }).then((result) => {
             if (result.isConfirmed) {
-                window.location = "/admin/messages/delete/" + id;
+                var deleteForm = document.getElementById('deleteForm');
+                deleteForm.action = "/admin/messages/" + id;
+                deleteForm.submit();
             }
         })
     }
@@ -79,8 +87,10 @@
             showCancelButton: false,
             allowOutsideClick: false
         }).then((result) => {
-            if(result.isConfirmed && visited == false){
-                window.location = "/admin/messages/status/" + id;
+            if(result.isConfirmed && visited === false){
+                var patchForm = document.getElementById('patchForm');
+                patchForm.action = "/admin/messages/" + id;
+                patchForm.submit();
             }
         })
         Swal.disableInput();

@@ -5,9 +5,9 @@
 {% block home %}
   <div class="websites">
     <div class="search">
-        <form action="/websites/search" method="GET">
+        <form action="/websites" method="GET">
           <label>Wyszukaj</label>
-          <input type="text" name="query" value="{{ search != null ? search : "" }}">
+          <input type="text" name="q" value="{{ search != null ? search : "" }}">
           <button type="submit" class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
         </form>
       </div>
@@ -42,12 +42,17 @@
                   <td><span class="status" style="background:#FF6B6B;">Odrzucone</span></td>
               {% endif %}
               <td class="views"><span>Odwiedzeń: </span>{{item.visited}} <i class="fa-solid fa-eye"></i></td>
-              <td>{% if item.status == 1 %}<a href="/url/{{ item.shorturl }}" target="_blank" class="button show">Pokaż</a><a href="/websites/include/{{item.hash}}" class="button change">Zmień</a>{% endif %}<a onClick="confirm_delete('{{item.hash}}')" class="button delete">Usuń</a></td>
+              <td>{% if item.status == 1 %}<a href="/url/{{ item.shorturl }}" target="_blank" class="button show">Pokaż</a><a onclick="modifyWebsite('{{item.hash}}');" class="button change">Zmień</a>{% endif %}<a onClick="confirm_delete('{{item.hash}}')" class="button delete">Usuń</a></td>
         </tr>
         {% endfor %}
-        
       </tbody>
     </table>
+      <form method="POST" id="deleteForm">
+          <input type="hidden" name="_method" value="DELETE">
+      </form>
+      <form method="POST" id="patchForm">
+          <input type="hidden" name="_method" value="PATCH">
+      </form>
   </div>
   <script>
     function confirm_delete(unique_id){
@@ -62,9 +67,16 @@
                 confirmButtonText: 'Tak, usuń to!'
                 }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location = "/websites/delete/" + unique_id;
+                    let form = document.querySelector('#deleteForm');
+                    form.action = "/websites/" + unique_id;
+                    form.submit();
                 }
                 })
+        }
+        function modifyWebsite(unique_id){
+            let form = document.querySelector('#patchForm');
+            form.action = "/websites/" + unique_id;
+            form.submit();
         }
   </script>
 {% endblock %}

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html data-theme="light">
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
@@ -19,7 +19,7 @@
                 let closeButton = document.querySelector(".navigation .close");
                 let body = document.querySelector("body");
 
-                if (navigation.style.display == "none" || navigation.style.display == "") {
+                if (navigation.style.display === "none" || navigation.style.display === "") {
                     navigation.style.display = "flex";
                     navigation.style.flexDirection = "column";
                     navigation.style.width = "100vw";
@@ -39,7 +39,7 @@
                 
                 let theme = localStorage.getItem("theme"); 
 
-                if (theme == 'light') {
+                if (theme === 'light') {
                     theme = 'dark'
                     document.documentElement.setAttribute('data-theme', 'dark');
                     toggle_button_icon.classList.replace("fa-moon", "fa-sun");
@@ -104,10 +104,10 @@
         const currentTheme = localStorage.getItem("theme");
         const toggle_button_icon = document.querySelector(".mode i");
 
-        if (currentTheme == "dark") {
+        if (currentTheme === "dark") {
             document.documentElement.setAttribute('data-theme', 'dark');
             toggle_button_icon.classList.replace("fa-moon", "fa-sun");
-        } else if (currentTheme == "light") {
+        } else if (currentTheme === "light") {
             document.documentElement.setAttribute('data-theme', 'light');
         }
     </script>

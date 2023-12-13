@@ -23,11 +23,21 @@
                     {% else %}
                         <td><span class="status" style="background:#FF6B6B;">Wyłączone</span></td>
                     {% endif %}
-                    <td><a href="/admin/settings/status/{{ setting.id }}" class="button chnage">Zmień</a></td>
+                    <td><a onclick="changeStatus('{{ setting.id }}');" class="button chnage">Zmień</a></td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
+        <form method="POST" id="patchForm">
+            <input type="hidden" name="_method" value="PATCH">
+        </form>
     </div>
     </div>
+    <script>
+        function changeStatus(id) {
+            var patchForm = document.getElementById('patchForm');
+            patchForm.action = "/admin/settings/" + id;
+            patchForm.submit();
+        }
+    </script>
 {% endblock %}

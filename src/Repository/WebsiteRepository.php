@@ -39,6 +39,32 @@ class WebsiteRepository extends ServiceEntityRepository
         }
     }
 
+    public function findLikeName($searchTerm, $user = null)
+    {
+        $queryBuilder = $this->createQueryBuilder('e')
+        ->andWhere($this->getEntityManager()->getExpressionBuilder()->like('e.url', ':searchTerm'))
+        ->orWhere($this->getEntityManager()->getExpressionBuilder()->like('e.hash', ':searchTerm'))
+        ->setParameter('searchTerm', '%' . $searchTerm . '%');
+        
+        if ($user) {
+            $queryBuilder->andWhere('e.user = :userId')
+                         ->setParameter('userId', $user->getId());
+        }
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
+    public function findMostVisitedWebsites($limit = 5)
+    {
+        return $this->createQueryBuilder('w')
+            ->where('w.status = 1')
+            ->andWhere('w.include = 1')
+            ->orderBy('w.visited', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return Website[] Returns an array of Website objects
 //     */

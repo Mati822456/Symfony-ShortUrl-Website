@@ -37,23 +37,33 @@
                         {% endfor %}
                         </td>
                     {% endif %}
-                    <td><a href="users/block/{{user.email}}" class="button block">{{"ROLE_BLOCKED" in user.roles ? "Odblokuj" : "Zablokuj"}}</a><a onClick="set_role('{{user.email}}')" class="button role">Zmień Role</a></td>
+                    <td><a onClick="blockUser({{user.id}})" class="button block">{{"ROLE_BLOCKED" in user.roles ? "Odblokuj" : "Zablokuj"}}</a><a onClick="set_role({{user.id}})" class="button role">Zmień Role</a></td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
+        <form id="patchForm" method="POST">
+            <input name="_method" type="hidden" value="PATCH">
+            <input type="hidden" name="role" id="roleInput" value="">
+        </form>
     </div>
     </div>
     <script>
-    function set_role(email){
+    function blockUser(id) {
+        var patchForm = document.getElementById('patchForm');
+        patchForm.action = "/admin/users/" + id;
+        document.getElementById("roleInput").value = 'BLOCK';
+        patchForm.submit();
+    }
+    function set_role(id){
         Swal.fire({
             icon: 'success',
             title: 'Nadawanie roli',
             input: 'select',
             inputOptions: {
-                'Admin': 'Administrator',
-                'Mod': 'Moderator',
-                'User': 'Użytkownik'
+                'ROLE_ADMIN': 'Administrator',
+                'ROLE_MOD': 'Moderator',
+                'ROLE_USER': 'Użytkownik'
             },
             inputPlaceholder: 'Wybierz role',
             inputValidator: (value) => {
@@ -68,7 +78,10 @@
             confirmButtonText: 'Tak, nadaj!'
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location = "/admin/users/setrole/" + email + "/" + result.value;
+                var patchForm = document.getElementById('patchForm');
+                patchForm.action = "/admin/users/" + id;
+                document.getElementById("roleInput").value = result.value;
+                patchForm.submit();
             }
         })
     }

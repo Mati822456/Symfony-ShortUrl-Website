@@ -104,14 +104,14 @@ I'm constantly working on this project. I want to add some new features. :)
 - filtering pages, users and messages
 - ~~new UI~~
 - pagination
-- RESTful API
+- ~~RESTful~~
 - asynchronous request
 - ~~dark mode~~
 
 ## Acknowledgements
 
 Icon by icons8.com
-`https://icons8.com/icon/stdEXlVErsEe/shorten-urls `
+`https://icons8.com/icon/stdEXlVErsEe/shorten-urls`
 
 ## Contact
 

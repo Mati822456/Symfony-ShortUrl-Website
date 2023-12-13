@@ -39,6 +39,18 @@ class ContactRepository extends ServiceEntityRepository
         }
     }
 
+    public function findLike($searchTerm)
+    {
+        $queryBuilder = $this->createQueryBuilder('m')
+        ->andWhere($this->getEntityManager()->getExpressionBuilder()->like('m.name', ':searchTerm'))
+        ->orWhere($this->getEntityManager()->getExpressionBuilder()->like('m.email', ':searchTerm'))
+        ->orWhere($this->getEntityManager()->getExpressionBuilder()->like('m.subject', ':searchTerm'))
+        ->orWhere($this->getEntityManager()->getExpressionBuilder()->like('m.message', ':searchTerm'))
+        ->setParameter('searchTerm', '%' . $searchTerm . '%');
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
 //    /**
 //     * @return Contact[] Returns an array of Contact objects
 //     */
