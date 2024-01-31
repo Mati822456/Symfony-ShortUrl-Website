@@ -35,16 +35,19 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         $admin = new User();
+        $admin->setUsername("Admin");
         $admin->setEmail("admin@db.com");
         $admin->setPassword($this->hasher->hashPassword($admin, 'Admin1234'));
         $admin->setRoles(array('ROLE_ADMIN'));
 
         $mod = new User();
+        $mod->setUsername("Moderator");
         $mod->setEmail("mod@db.com");
         $mod->setPassword($this->hasher->hashPassword($admin, 'Mod1234'));
         $mod->setRoles(array('ROLE_MOD'));
 
         $user = new User();
+        $user->setUsername("Użytkownik");
         $user->setEmail("user@db.com");
         $user->setPassword($this->hasher->hashPassword($admin, 'User1234'));
         $user->setRoles(array('ROLE_USER'));

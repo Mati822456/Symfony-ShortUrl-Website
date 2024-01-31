@@ -32,6 +32,9 @@ class RegistrationController extends AbstractController
                 )
             );
 
+            $username = strip_tags($form->get('username')->getData());
+            $user->setUsername($username);
+
             $entityManager->persist($user);
             $entityManager->flush();
 

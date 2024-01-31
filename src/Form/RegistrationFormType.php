@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
@@ -18,6 +19,20 @@ class RegistrationFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add('username', TextType::class, [
+                'label' => 'Nazwa użytkownika',
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Proszę podać nazwę!',
+                    ]),
+                    new Length([
+                        'min' => 2,
+                        'minMessage' => 'Twoja nazwa użytkownika powinna zawierać co najmiej {{ limit }} znaków!',
+                        // max length allowed by Symfony for security reasons
+                        'max' => 60,
+                    ]),
+                ],
+            ])
             ->add('email', EmailType::class)
             ->add('agreeTerms', CheckboxType::class, [
                 'label' => 'Akceptuję regulamin',

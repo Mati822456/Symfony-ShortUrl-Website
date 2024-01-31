@@ -10,6 +10,7 @@
             <tbody>
             <tr>
                 <th>ID</th>
+                <th>Pseudonim</th>
                 <th>Email</th>
                 <th>Role</th>
                 <th>Akcje</th>
@@ -17,6 +18,7 @@
             {% for user in users %}
                 <tr>
                     <td><span>ID: </span>#{{loop.index}}</td>
+                    <td><span>Pseudonim: </span>{{user.username}}</td>
                     <td><span>Email: </span>{{user.email}}</td>
 
                     {% if user.roles is iterable %}

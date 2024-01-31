@@ -4,6 +4,8 @@
     <div class="account">
     {{form_start(form)}}
 
+        <label>Nazwa użytkownika</label>
+        <input type="text" value="{{user.username}}" readonly>
         <label>Email</label>
         <input type="text" value="{{user.email}}" readonly>
         <div class="line"></div>

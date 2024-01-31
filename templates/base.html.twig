@@ -11,46 +11,10 @@
         <script src="https://kit.fontawesome.com/15901ecbea.js" crossorigin="anonymous"></script>
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
             <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         {% endblock %}
-          <script>
-            function menu(){
-                let navigation = document.querySelector(".navigation");
-                let closeButton = document.querySelector(".navigation .close");
-                let body = document.querySelector("body");
 
-                if (navigation.style.display === "none" || navigation.style.display === "") {
-                    navigation.style.display = "flex";
-                    navigation.style.flexDirection = "column";
-                    navigation.style.width = "100vw";
-                    body.style.overflow = "hidden";
-                    closeButton.style.display = "block";
-                } else {
-                    navigation.style.display = "none";
-                    navigation.style.flexDirection = "row";
-                    navigation.style.width = "calc(100% - 72px - 40px - 206.6px - 40px - 20px)";
-                    body.style.overflow = "auto";
-                    closeButton.style.display = "none";
-                }
-            }
-            function toggleMode(){
-                const toggle_button_icon = document.querySelector(".mode i");
-                const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
-                
-                let theme = localStorage.getItem("theme"); 
-
-                if (theme === 'light') {
-                    theme = 'dark'
-                    document.documentElement.setAttribute('data-theme', 'dark');
-                    toggle_button_icon.classList.replace("fa-moon", "fa-sun");
-                } else {
-                    theme = 'light'
-                    document.documentElement.setAttribute('data-theme', 'light');
-                    toggle_button_icon.classList.replace("fa-sun", "fa-moon");
-                }
-                localStorage.setItem("theme", theme);
-            }
-        </script>
     </head>
     <body>
         {% set currentRoute = app.request.attributes.get('_route') %}
@@ -62,8 +26,8 @@
                     <a href="/contact" {{ currentRoute == "contact" ? 'class="active"' : '' }}>Kontakt</a>
                     {% if app.user %}
                         <span class="line"> </span>
-                        <a href="/websites" {{ currentRoute == "websites" ? 'class="active"' : '' }}>Strony</a>
-                        <a href="/shorturl" {{ currentRoute == "short" ? 'class="active"' : '' }}>Skróć</a>
+                        <a href="/websites" {{ currentRoute == "index_websites" ? 'class="active"' : '' }}>Strony</a>
+                        <a href="/shorturl" {{ currentRoute == "create_website" ? 'class="active"' : '' }}>Skróć</a>
                         <a href="/account" {{ currentRoute == "account" ? 'class="active"' : '' }}>Konto</a>
                         {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_MOD') %}
                             <a href="/admin" {{ 'admin' in currentRoute ? 'class="active"' : '' }}>Admin</a>
