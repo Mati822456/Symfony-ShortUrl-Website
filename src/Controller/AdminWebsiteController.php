@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Notification;
 use App\Repository\WebsiteRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -41,10 +42,16 @@ class AdminWebsiteController extends AbstractController
     }
 
     #[Route('/admin/websites', name: 'admin_websites', methods: ['GET'])]
-    public function index(Request $request): Response
+    public function index(Request $request, PaginatorInterface $paginator): Response
     {
-        $query = $request->get('q');
+        $q = $request->get('q');
         $filter = $request->get('filter');
+        $page = $request->query->getInt('page', 1);
+        $pageSize = 10;
+
+        $queryBuilder = $this->em->createQueryBuilder();
+        $queryBuilder->select('w')
+            ->from('App\Entity\Website', 'w');
 
         if ($filter){
             if ($filter === 'today'){
@@ -52,29 +59,41 @@ class AdminWebsiteController extends AbstractController
                 $startDate = $today->setTime(0, 0, 0)->format("d-m-Y H:i:s");
                 $endDate = $today->setTime(23, 59, 59)->format("d-m-Y H:i:s");
 
-                $qb = $this->em->createQueryBuilder();
-                $qb->select('w')
-                    ->from('App\Entity\Website', 'w')
-                    ->where('w.created_date >= :startOfDay')
+                $queryBuilder->where('w.created_date >= :startOfDay')
                     ->andWhere('w.created_date <= :endOfDay')
                     ->orderBy('w.id', 'DESC')
                     ->setParameter('startOfDay', $startDate)
                     ->setParameter('endOfDay', $endDate);
-                $websites = $qb->getQuery()->getResult();
+
             } else if ($filter === 'accept'){
-                $websites = $this->websiteRepository->findBy(['status' => 0], array('id' => 'DESC'));
+                $queryBuilder->where('w.status = :status')
+                    ->setParameter('status', 0);
             }
         } else {
-            if ($query) {
-                $websites = $this->websiteRepository->findLikeName($query);
-            } else {
-                $websites = $this->websiteRepository->findBy(array(), array('id' => 'DESC'));
+            if ($q) {
+                $queryBuilder->andWhere(
+                    $queryBuilder->expr()->orX(
+                        $queryBuilder->expr()->like('w.url', ':searchTerm'),
+                        $queryBuilder->expr()->like('w.hash', ':searchTerm')
+                    )
+                )->setParameter('searchTerm', '%' . $q . '%');
             }
         }
 
+        $queryBuilder->orderBy('w.id', 'DESC');
+
+        $query = $queryBuilder->getQuery();
+
+        $websites = $paginator->paginate(
+            $query,
+            $page,
+            $pageSize
+        );
+
         return $this->render('admin/websites.html.twig', [
             'websites' => $websites,
-            'search' => $query
+            'page' => $page,
+            'search' => $q
         ]);
     }
 

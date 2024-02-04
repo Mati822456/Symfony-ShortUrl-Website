@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Notification;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -41,12 +42,28 @@ class AdminUserController extends AbstractController
     }
 
     #[Route('/admin/users', name: 'admin_users', methods: ['GET'])]
-    public function index(): Response
+    public function index(Request $request, PaginatorInterface $paginator): Response
     {
-        $users = $this->userRepository->findAll();
+        $page = $request->query->getInt('page', 1);
+        $pageSize = 10;
+
+        $queryBuilder = $this->em->createQueryBuilder();
+
+        $queryBuilder->select('u')
+            ->from('App\Entity\User', 'u')
+            ->orderBy('u.id', 'ASC');
+
+        $query = $queryBuilder->getQuery();
+
+        $users = $paginator->paginate(
+            $query,
+            $page,
+            $pageSize
+        );
 
         return $this->render('admin/users.html.twig',[
-            'users' => $users
+            'users' => $users,
+            'page' => $page
         ]);
     }
 

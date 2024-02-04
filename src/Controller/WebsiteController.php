@@ -7,6 +7,8 @@ use App\Form\ShortUrlFormType;
 use App\Repository\WebsiteRepository;
 use App\Repository\SettingsRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -37,15 +39,38 @@ class WebsiteController extends AbstractController
     }
 
     #[Route('/websites', name: 'index_websites', methods: ['GET'])]
-    public function index(Request $request): Response
+    public function index(Request $request, PaginatorInterface $paginator): Response
     {
+        $page = $request->query->getInt('page', 1);
+        $pageSize = 10;
+
+        $queryBuilder = $this->em->createQueryBuilder();
+
+        $queryBuilder->select('w')
+            ->from('App\Entity\Website', 'w');
+
         if ($request->get('q')) {
-            $websites = $this->websiteRepository->findLikeName($request->get('q'), $this->getUser());
-        } else {
-            $websites = $this->getAllWebsites();
+            $queryBuilder->andWhere(
+                $queryBuilder->expr()->orX(
+                    $queryBuilder->expr()->like('w.url', ':searchTerm'),
+                    $queryBuilder->expr()->like('w.hash', ':searchTerm')
+                )
+            )->setParameter('searchTerm', '%' . $request->get('q') . '%');
         }
+
+        $queryBuilder->orderBy('w.id', 'DESC');
+
+        $query = $queryBuilder->getQuery();
+
+        $websites = $paginator->paginate(
+            $query,
+            $page,
+            $pageSize
+        );
+
         return $this->render('panel/websites.html.twig', [
             'websites' => $websites,
+            'page' => $page,
             'search' => $request->get('q'),
             'ip' => $request->getClientIp()
         ]);

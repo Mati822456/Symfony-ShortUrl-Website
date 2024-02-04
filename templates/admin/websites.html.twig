@@ -32,7 +32,7 @@
             {% endif %}
             {% for item in websites %}
                 <tr>
-                    <td><span>ID: </span>#{{loop.index}}</td>
+                    <td><span>ID: </span>#{{loop.index + ((page - 1) * 10)}}</td>
                     <td class="url"><span>Url: </span>{{item.url|length > 50 ? item.url|slice(0, 50) ~ '...' : item.url}}</td>
                     {% if item.status == 2 %}
                         <td><span class="status canceled">! {{item.shorturl}} !</span></td>
@@ -64,6 +64,7 @@
             {% endfor %}
             </tbody>
         </table>
+        {{ knp_pagination_render(websites) }}
         <form id="patchForm" method="POST">
             <input name="_method" type="hidden" value="PATCH">
             <input type="hidden" name="status" id="statusInput" value="0">

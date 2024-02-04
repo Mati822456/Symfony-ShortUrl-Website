@@ -31,7 +31,7 @@
             {% endif %}
             {% for item in messages %}
                 <tr>
-                    <td><span>ID: </span>#{{loop.index}}</td>
+                    <td><span>ID: </span>#{{loop.index + ((page - 1) * 10)}}</td>
                     <td><span>Imię: </span>{{item.name}}</td>
                     <td><span>Email: </span>{{item.email}}</td>
                     <td><span>Temat: </span>{{item.subject}}</td>
@@ -46,6 +46,7 @@
             {% endfor %}
             </tbody>
         </table>
+        {{ knp_pagination_render(messages) }}
         <form method="POST" id="patchForm">
             <input type="hidden" name="_method" value="PATCH">
         </form>

@@ -20,7 +20,7 @@
         {% endif %}
         {% for item in websites %}
           <tr>
-              <td><span>ID: </span>#{{loop.index}}</td>
+              <td><span>ID: </span>#{{loop.index + ((page - 1) * 10)}}</td>
               <td class="url"><span>Url: </span>{{item.url|length > 50 ? item.url|slice(0, 50) ~ '...' : item.url}}</td>
               {% if item.status == 2 %}
                   <td><span class="status canceled">! {{item.shorturl}} !</span></td>
@@ -47,12 +47,13 @@
         {% endfor %}
       </tbody>
     </table>
-      <form method="POST" id="deleteForm">
-          <input type="hidden" name="_method" value="DELETE">
-      </form>
-      <form method="POST" id="patchForm">
-          <input type="hidden" name="_method" value="PATCH">
-      </form>
+    {{ knp_pagination_render(websites) }}
+    <form method="POST" id="deleteForm">
+        <input type="hidden" name="_method" value="DELETE">
+    </form>
+    <form method="POST" id="patchForm">
+        <input type="hidden" name="_method" value="PATCH">
+    </form>
   </div>
   <script>
     function confirm_delete(unique_id){

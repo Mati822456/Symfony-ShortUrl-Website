@@ -103,7 +103,7 @@ I'm constantly working on this project. I want to add some new features. :)
 - ~~new page dedicated to notifications to tell user which website was deleted or canceled and I want to add button with icon located next to login/logout button~~
 - filtering pages, users and messages
 - ~~new UI~~
-- pagination
+- ~~pagination~~
 - ~~RESTful~~
 - asynchronous request
 - ~~dark mode~~

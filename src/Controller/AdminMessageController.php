@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Repository\ContactRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,19 +15,43 @@ class AdminMessageController extends AbstractController
     public function __construct(private ContactRepository $contactRepository, private EntityManagerInterface $em){}
 
     #[Route('/admin/messages', name: 'admin_messages', methods: ['GET'])]
-    public function index(Request $request): Response
+    public function index(Request $request, PaginatorInterface $paginator): Response
     {   
-        $query = $request->get('q');
+        $q = $request->get('q');
+        $page = $request->query->getInt('page', 1);
+        $pageSize = 10;
 
-        if ($query) {
-            $messages = $this->contactRepository->findLike($query);
-        } else {
-            $messages = $this->contactRepository->findBy([], ['id' => 'DESC']);
+        $queryBuilder = $this->em->createQueryBuilder();
+
+        $queryBuilder->select('m')
+            ->from('App\Entity\Contact', 'm')
+            ->orderBy('m.id', 'ASC');
+
+        if ($request->get('q')) {
+            $queryBuilder->andWhere(
+                $queryBuilder->expr()->orX(
+                    $queryBuilder->expr()->like('m.message', ':searchTerm'),
+                    $queryBuilder->expr()->like('m.email', ':searchTerm'),
+                    $queryBuilder->expr()->like('m.subject', ':searchTerm'),
+                    $queryBuilder->expr()->like('m.message', ':searchTerm')
+                )
+            )->setParameter('searchTerm', '%' . $request->get('q') . '%');
         }
+
+        $queryBuilder->orderBy('m.id', 'DESC');
+
+        $query = $queryBuilder->getQuery();
+
+        $messages = $paginator->paginate(
+            $query,
+            $page,
+            $pageSize
+        );
 
         return $this->render('admin/messages.html.twig', [
             'messages' => $messages,
-            'search' => $query
+            'page' => $page,
+            'search' => $request->get('q')
         ]);
     }
 

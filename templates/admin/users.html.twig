@@ -17,7 +17,7 @@
             </tr>
             {% for user in users %}
                 <tr>
-                    <td><span>ID: </span>#{{loop.index}}</td>
+                    <td><span>ID: </span>#{{loop.index + ((page - 1) * 10)}}</td>
                     <td><span>Pseudonim: </span>{{user.username}}</td>
                     <td><span>Email: </span>{{user.email}}</td>
 
@@ -44,6 +44,7 @@
             {% endfor %}
             </tbody>
         </table>
+        {{ knp_pagination_render(users) }}
         <form id="patchForm" method="POST">
             <input name="_method" type="hidden" value="PATCH">
             <input type="hidden" name="role" id="roleInput" value="">
